@@ -1,46 +1,78 @@
 [
     {
-        "merged": "com.nathan.workspace.app-merged_res-35:/layout_activity_main.xml.flat",
-        "source": "com.nathan.workspace.app-main-37:/layout/activity_main.xml"
+        "merged": "com.nathan.workspace.app-merged_res-47:/drawable_ic_github_mark.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/drawable/ic_github_mark.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_play.xml.flat",
-        "source": "com.nathan.workspace.app-main-37:/drawable/ic_play.xml"
+        "merged": "com.nathan.workspace.app-merged_res-47:/drawable_ic_person.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/drawable/ic_person.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.nathan.workspace.app-main-37:/drawable/ic_launcher_foreground.xml"
+        "merged": "com.nathan.workspace.app-merged_res-47:/drawable_ic_web.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/drawable/ic_web.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-merged_res-35:/layout_activity_login.xml.flat",
-        "source": "com.nathan.workspace.app-main-37:/layout/activity_login.xml"
+        "merged": "com.nathan.workspace.app-merged_res-47:/menu_bottom_nav.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/menu/bottom_nav.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_code.xml.flat",
-        "source": "com.nathan.workspace.app-main-37:/drawable/ic_code.xml"
+        "merged": "com.nathan.workspace.app-merged_res-47:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_launcher_background.xml.flat",
-        "source": "com.nathan.workspace.app-main-37:/drawable/ic_launcher_background.xml"
+        "merged": "com.nathan.workspace.app-merged_res-47:/drawable_ic_logout.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/drawable/ic_logout.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_logout.xml.flat",
-        "source": "com.nathan.workspace.app-main-37:/drawable/ic_logout.xml"
+        "merged": "com.nathan.workspace.app-merged_res-47:/layout_activity_login.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/layout/activity_login.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_key.xml.flat",
-        "source": "com.nathan.workspace.app-main-37:/drawable/ic_key.xml"
+        "merged": "com.nathan.workspace.app-merged_res-47:/layout_fragment_profile.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/layout/fragment_profile.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_eye.xml.flat",
-        "source": "com.nathan.workspace.app-main-37:/drawable/ic_eye.xml"
+        "merged": "com.nathan.workspace.app-merged_res-47:/drawable_ic_eye.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/drawable/ic_eye.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_github_mark.xml.flat",
-        "source": "com.nathan.workspace.app-main-37:/drawable/ic_github_mark.xml"
+        "merged": "com.nathan.workspace.app-merged_res-47:/drawable_ic_key.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/drawable/ic_key.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-merged_res-35:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.nathan.workspace.app-main-37:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "com.nathan.workspace.app-merged_res-47:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-47:/drawable_ic_play.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/drawable/ic_play.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-47:/layout_activity_main.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-47:/drawable_ic_code.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/drawable/ic_code.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-47:/layout_fragment_webview.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/layout/fragment_webview.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-47:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-47:/layout_fragment_workflow.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/layout/fragment_workflow.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-47:/drawable_nav_color.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/drawable/nav_color.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-47:/navigation_nav_graph.xml.flat",
+        "source": "com.nathan.workspace.app-main-49:/navigation/nav_graph.xml"
     }
 ]

@@ -105,6 +105,8 @@
     <string name="mtrl_picker_toggle_to_year_selection">İl görünüşünə keçirmək üçün toxunun</string>
     <string name="mtrl_timepicker_cancel">Ləğv edin</string>
     <string name="mtrl_timepicker_confirm">OK</string>
+    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"Yuxarı keçin"</string>
+    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"Naviqasiya panelini açın"</string>
     <string name="password_toggle_content_description">Parolu göstərin</string>
     <string msgid="6264217191555673260" name="search_menu_title">"Axtarın"</string>
     <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>

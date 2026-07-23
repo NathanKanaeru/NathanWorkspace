@@ -4,19 +4,13 @@ package com.nathan.workspace.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.nathan.workspace.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -27,74 +21,16 @@ public final class ActivityMainBinding implements ViewBinding {
   private final ConstraintLayout rootView;
 
   @NonNull
-  public final MaterialButton btnRun;
+  public final BottomNavigationView bottomNav;
 
   @NonNull
-  public final MaterialCardView cardStatus;
+  public final FragmentContainerView navHost;
 
-  @NonNull
-  public final MaterialCardView cardUser;
-
-  @NonNull
-  public final MaterialCardView cardWorkflow;
-
-  @NonNull
-  public final TextInputEditText etCode;
-
-  @NonNull
-  public final ImageView ivAvatar;
-
-  @NonNull
-  public final ProgressBar progressWorkflow;
-
-  @NonNull
-  public final TextInputLayout tilCode;
-
-  @NonNull
-  public final MaterialToolbar toolbar;
-
-  @NonNull
-  public final TextView tvStatusDetail;
-
-  @NonNull
-  public final TextView tvStatusTitle;
-
-  @NonNull
-  public final TextView tvUserLogin;
-
-  @NonNull
-  public final TextView tvUserName;
-
-  @NonNull
-  public final TextView tvWorkflowDesc;
-
-  @NonNull
-  public final TextView tvWorkflowTitle;
-
-  private ActivityMainBinding(@NonNull ConstraintLayout rootView, @NonNull MaterialButton btnRun,
-      @NonNull MaterialCardView cardStatus, @NonNull MaterialCardView cardUser,
-      @NonNull MaterialCardView cardWorkflow, @NonNull TextInputEditText etCode,
-      @NonNull ImageView ivAvatar, @NonNull ProgressBar progressWorkflow,
-      @NonNull TextInputLayout tilCode, @NonNull MaterialToolbar toolbar,
-      @NonNull TextView tvStatusDetail, @NonNull TextView tvStatusTitle,
-      @NonNull TextView tvUserLogin, @NonNull TextView tvUserName, @NonNull TextView tvWorkflowDesc,
-      @NonNull TextView tvWorkflowTitle) {
+  private ActivityMainBinding(@NonNull ConstraintLayout rootView,
+      @NonNull BottomNavigationView bottomNav, @NonNull FragmentContainerView navHost) {
     this.rootView = rootView;
-    this.btnRun = btnRun;
-    this.cardStatus = cardStatus;
-    this.cardUser = cardUser;
-    this.cardWorkflow = cardWorkflow;
-    this.etCode = etCode;
-    this.ivAvatar = ivAvatar;
-    this.progressWorkflow = progressWorkflow;
-    this.tilCode = tilCode;
-    this.toolbar = toolbar;
-    this.tvStatusDetail = tvStatusDetail;
-    this.tvStatusTitle = tvStatusTitle;
-    this.tvUserLogin = tvUserLogin;
-    this.tvUserName = tvUserName;
-    this.tvWorkflowDesc = tvWorkflowDesc;
-    this.tvWorkflowTitle = tvWorkflowTitle;
+    this.bottomNav = bottomNav;
+    this.navHost = navHost;
   }
 
   @Override
@@ -124,99 +60,19 @@ public final class ActivityMainBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.btn_run;
-      MaterialButton btnRun = ViewBindings.findChildViewById(rootView, id);
-      if (btnRun == null) {
+      id = R.id.bottom_nav;
+      BottomNavigationView bottomNav = ViewBindings.findChildViewById(rootView, id);
+      if (bottomNav == null) {
         break missingId;
       }
 
-      id = R.id.card_status;
-      MaterialCardView cardStatus = ViewBindings.findChildViewById(rootView, id);
-      if (cardStatus == null) {
+      id = R.id.nav_host;
+      FragmentContainerView navHost = ViewBindings.findChildViewById(rootView, id);
+      if (navHost == null) {
         break missingId;
       }
 
-      id = R.id.card_user;
-      MaterialCardView cardUser = ViewBindings.findChildViewById(rootView, id);
-      if (cardUser == null) {
-        break missingId;
-      }
-
-      id = R.id.card_workflow;
-      MaterialCardView cardWorkflow = ViewBindings.findChildViewById(rootView, id);
-      if (cardWorkflow == null) {
-        break missingId;
-      }
-
-      id = R.id.et_code;
-      TextInputEditText etCode = ViewBindings.findChildViewById(rootView, id);
-      if (etCode == null) {
-        break missingId;
-      }
-
-      id = R.id.iv_avatar;
-      ImageView ivAvatar = ViewBindings.findChildViewById(rootView, id);
-      if (ivAvatar == null) {
-        break missingId;
-      }
-
-      id = R.id.progress_workflow;
-      ProgressBar progressWorkflow = ViewBindings.findChildViewById(rootView, id);
-      if (progressWorkflow == null) {
-        break missingId;
-      }
-
-      id = R.id.til_code;
-      TextInputLayout tilCode = ViewBindings.findChildViewById(rootView, id);
-      if (tilCode == null) {
-        break missingId;
-      }
-
-      id = R.id.toolbar;
-      MaterialToolbar toolbar = ViewBindings.findChildViewById(rootView, id);
-      if (toolbar == null) {
-        break missingId;
-      }
-
-      id = R.id.tv_status_detail;
-      TextView tvStatusDetail = ViewBindings.findChildViewById(rootView, id);
-      if (tvStatusDetail == null) {
-        break missingId;
-      }
-
-      id = R.id.tv_status_title;
-      TextView tvStatusTitle = ViewBindings.findChildViewById(rootView, id);
-      if (tvStatusTitle == null) {
-        break missingId;
-      }
-
-      id = R.id.tv_user_login;
-      TextView tvUserLogin = ViewBindings.findChildViewById(rootView, id);
-      if (tvUserLogin == null) {
-        break missingId;
-      }
-
-      id = R.id.tv_user_name;
-      TextView tvUserName = ViewBindings.findChildViewById(rootView, id);
-      if (tvUserName == null) {
-        break missingId;
-      }
-
-      id = R.id.tv_workflow_desc;
-      TextView tvWorkflowDesc = ViewBindings.findChildViewById(rootView, id);
-      if (tvWorkflowDesc == null) {
-        break missingId;
-      }
-
-      id = R.id.tv_workflow_title;
-      TextView tvWorkflowTitle = ViewBindings.findChildViewById(rootView, id);
-      if (tvWorkflowTitle == null) {
-        break missingId;
-      }
-
-      return new ActivityMainBinding((ConstraintLayout) rootView, btnRun, cardStatus, cardUser,
-          cardWorkflow, etCode, ivAvatar, progressWorkflow, tilCode, toolbar, tvStatusDetail,
-          tvStatusTitle, tvUserLogin, tvUserName, tvWorkflowDesc, tvWorkflowTitle);
+      return new ActivityMainBinding((ConstraintLayout) rootView, bottomNav, navHost);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
