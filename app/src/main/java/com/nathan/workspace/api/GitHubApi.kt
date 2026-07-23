@@ -1,5 +1,6 @@
 package com.nathan.workspace.api
 
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -33,23 +34,27 @@ object GitHubApi {
             val request = authRequest("$API_BASE/user", token).build()
             val response = client.newCall(request).execute()
             val body = response.body?.string()
+            val code = response.code
 
             if (!response.isSuccessful) {
-                val msg = when (response.code) {
+                val snippet = if (!body.isNullOrBlank()) body.take(200) else ""
+                val msg = when (code) {
                     401 -> "Token tidak valid"
-                    403 -> "Akses ditolak (rate limit?)"
-                    else -> "Error ${response.code}: ${response.message}"
+                    403 -> "Akses ditolak"
+                    else -> "Error $code${if (snippet.isNotBlank()) ": $snippet" else ""}"
                 }
                 return@withContext Result.failure(Exception(msg))
             }
             if (body.isNullOrBlank())
-                return@withContext Result.failure(Exception("Respon kosong dari server"))
+                return@withContext Result.failure(Exception("Respon kosong (200 OK, body kosong)"))
 
-            val json = try {
-                JsonParser.parseString(body).asJsonObject
-            } catch (e: Exception) {
-                return@withContext Result.failure(Exception("Format respon tidak valid"))
+            val parsed = JsonParser.parseString(body)
+            if (!parsed.isJsonObject) {
+                return@withContext Result.failure(
+                    Exception("Respon bukan JSON object: ${body.take(200)}")
+                )
             }
+            val json = parsed.asJsonObject
 
             Result.success(UserInfo(
                 login = json.get("login")?.asString ?: "",
@@ -71,27 +76,40 @@ object GitHubApi {
         } catch (e: Exception) { Result.failure(e) }
     }
 
+    private fun parseJson(body: String): Result<JsonObject> {
+        return try {
+            val parsed = JsonParser.parseString(body)
+            if (!parsed.isJsonObject)
+                Result.failure(Exception("Respon bukan JSON object: ${body.take(200)}"))
+            else
+                Result.success(parsed.asJsonObject)
+        } catch (e: Exception) {
+            Result.failure(Exception("Gagal parse JSON: ${body.take(200)}"))
+        }
+    }
+
+    private fun parseWorkflowRun(obj: JsonObject) = WorkflowRunInfo(
+        id = obj.get("id").asLong,
+        status = obj.get("status")?.asString ?: "unknown",
+        conclusion = obj.get("conclusion")?.asString,
+        createdAt = obj.get("created_at")?.asString ?: "",
+        updatedAt = obj.get("updated_at")?.asString ?: "",
+        htmlUrl = obj.get("html_url")?.asString ?: ""
+    )
+
     suspend fun getLatestRun(token: String): Result<WorkflowRunInfo> = withContext(Dispatchers.IO) {
         try {
             val url = "$API_BASE/repos/$OWNER/$REPO/actions/workflows/$WORKFLOW/runs?per_page=1"
             val response = authRequest(url, token).build().let { client.newCall(it).execute() }
             val body = response.body?.string()
-            if (!response.isSuccessful || body == null)
-                return@withContext Result.failure(Exception("Failed to get runs: ${response.code}"))
+            if (!response.isSuccessful || body.isNullOrBlank())
+                return@withContext Result.failure(Exception("Gagal ambil runs (${response.code})"))
 
-            val json = JsonParser.parseString(body).asJsonObject
-            val runs = json.getAsJsonArray("workflow_runs")
-            if (runs.size() == 0) return@withContext Result.failure(Exception("No runs found"))
+            val json = parseJson(body).getOrElse { return@withContext Result.failure(it) }
+            val runs = json.getAsJsonArray("workflow_runs") ?: return@withContext Result.failure(Exception("Tidak ada field workflow_runs"))
+            if (runs.size() == 0) return@withContext Result.failure(Exception("Belum ada runs"))
 
-            val run = runs[0].asJsonObject
-            Result.success(WorkflowRunInfo(
-                id = run.get("id").asLong,
-                status = run.get("status")?.asString ?: "unknown",
-                conclusion = run.get("conclusion")?.asString,
-                createdAt = run.get("created_at")?.asString ?: "",
-                updatedAt = run.get("updated_at")?.asString ?: "",
-                htmlUrl = run.get("html_url")?.asString ?: ""
-            ))
+            Result.success(parseWorkflowRun(runs[0].asJsonObject))
         } catch (e: Exception) { Result.failure(e) }
     }
 
@@ -100,18 +118,11 @@ object GitHubApi {
             val response = authRequest("$API_BASE/repos/$OWNER/$REPO/actions/runs/$runId", token)
                 .build().let { client.newCall(it).execute() }
             val body = response.body?.string()
-            if (!response.isSuccessful || body == null)
-                return@withContext Result.failure(Exception("Failed to get run: ${response.code}"))
+            if (!response.isSuccessful || body.isNullOrBlank())
+                return@withContext Result.failure(Exception("Gagal ambil run (${response.code})"))
 
-            val json = JsonParser.parseString(body).asJsonObject
-            Result.success(WorkflowRunInfo(
-                id = json.get("id").asLong,
-                status = json.get("status")?.asString ?: "unknown",
-                conclusion = json.get("conclusion")?.asString,
-                createdAt = json.get("created_at")?.asString ?: "",
-                updatedAt = json.get("updated_at")?.asString ?: "",
-                htmlUrl = json.get("html_url")?.asString ?: ""
-            ))
+            val json = parseJson(body).getOrElse { return@withContext Result.failure(it) }
+            Result.success(parseWorkflowRun(json))
         } catch (e: Exception) { Result.failure(e) }
     }
 
@@ -121,7 +132,7 @@ object GitHubApi {
                 .build().let { client.newCall(it).execute() }
             val body = response.body?.string()
             if (!response.isSuccessful || body == null)
-                return@withContext Result.failure(Exception("Failed to get logs: ${response.code}"))
+                return@withContext Result.failure(Exception("Gagal ambil logs (${response.code})"))
             Result.success(body)
         } catch (e: Exception) { Result.failure(e) }
     }
@@ -131,7 +142,7 @@ object GitHubApi {
             val response = authRequest("$API_BASE/repos/$OWNER/$REPO/actions/runs/$runId/cancel", token)
                 .post("".toRequestBody(jsonMediaType)).build().let { client.newCall(it).execute() }
             if (response.isSuccessful) Result.success(Unit)
-            else Result.failure(Exception("Cancel failed: ${response.code}"))
+            else Result.failure(Exception("Gagal cancel (${response.code})"))
         } catch (e: Exception) { Result.failure(e) }
     }
 
@@ -140,7 +151,7 @@ object GitHubApi {
             val response = authRequest("$API_BASE/repos/$OWNER/$REPO/actions/runs/$runId/logs", token)
                 .delete().build().let { client.newCall(it).execute() }
             if (response.isSuccessful || response.code == 204) Result.success(Unit)
-            else Result.failure(Exception("Delete logs failed: ${response.code}"))
+            else Result.failure(Exception("Gagal hapus logs (${response.code})"))
         } catch (e: Exception) { Result.failure(e) }
     }
 
@@ -149,22 +160,12 @@ object GitHubApi {
             val url = "$API_BASE/repos/$OWNER/$REPO/actions/workflows/$WORKFLOW/runs?per_page=$perPage"
             val response = authRequest(url, token).build().let { client.newCall(it).execute() }
             val body = response.body?.string()
-            if (!response.isSuccessful || body == null)
-                return@withContext Result.failure(Exception("Failed to list runs: ${response.code}"))
+            if (!response.isSuccessful || body.isNullOrBlank())
+                return@withContext Result.failure(Exception("Gagal list runs (${response.code})"))
 
-            val json = JsonParser.parseString(body).asJsonObject
-            val runs = json.getAsJsonArray("workflow_runs")
-            val list = runs.map { it.asJsonObject.let { obj ->
-                WorkflowRunInfo(
-                    id = obj.get("id").asLong,
-                    status = obj.get("status")?.asString ?: "unknown",
-                    conclusion = obj.get("conclusion")?.asString,
-                    createdAt = obj.get("created_at")?.asString ?: "",
-                    updatedAt = obj.get("updated_at")?.asString ?: "",
-                    htmlUrl = obj.get("html_url")?.asString ?: ""
-                )
-            }}
-            Result.success(list)
+            val json = parseJson(body).getOrElse { return@withContext Result.failure(it) }
+            val arr = json.getAsJsonArray("workflow_runs") ?: return@withContext Result.failure(Exception("Tidak ada field workflow_runs"))
+            Result.success(arr.map { parseWorkflowRun(it.asJsonObject) })
         } catch (e: Exception) { Result.failure(e) }
     }
 }
