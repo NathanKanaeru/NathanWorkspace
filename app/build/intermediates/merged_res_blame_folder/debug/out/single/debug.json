@@ -1,0 +1,46 @@
+[
+    {
+        "merged": "com.nathan.workspace.app-merged_res-35:/layout_activity_main.xml.flat",
+        "source": "com.nathan.workspace.app-main-37:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_play.xml.flat",
+        "source": "com.nathan.workspace.app-main-37:/drawable/ic_play.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.nathan.workspace.app-main-37:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-35:/layout_activity_login.xml.flat",
+        "source": "com.nathan.workspace.app-main-37:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_code.xml.flat",
+        "source": "com.nathan.workspace.app-main-37:/drawable/ic_code.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.nathan.workspace.app-main-37:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_logout.xml.flat",
+        "source": "com.nathan.workspace.app-main-37:/drawable/ic_logout.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_key.xml.flat",
+        "source": "com.nathan.workspace.app-main-37:/drawable/ic_key.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_eye.xml.flat",
+        "source": "com.nathan.workspace.app-main-37:/drawable/ic_eye.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-35:/drawable_ic_github_mark.xml.flat",
+        "source": "com.nathan.workspace.app-main-37:/drawable/ic_github_mark.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-merged_res-35:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.nathan.workspace.app-main-37:/mipmap-anydpi-v26/ic_launcher.xml"
+    }
+]
