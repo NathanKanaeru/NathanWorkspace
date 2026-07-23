@@ -1,98 +1,94 @@
 [
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_check.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_check.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/layout_activity_login.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/layout/activity_login.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_code.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_code.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_eye.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_eye.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\mipmap-anydpi-v26\\ic_launcher.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_key.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_key.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\navigation_nav_graph.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\navigation\\nav_graph.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_stop.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_stop.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_github_mark.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_github_mark.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/menu_bottom_nav.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/menu/bottom_nav.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_play.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_play.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_web.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_web.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\layout_activity_main.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\layout\\activity_main.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_delete.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_delete.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_delete.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_delete.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\layout_activity_login.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\layout\\activity_login.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_close.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_close.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-merged_res-47:/layout_item_history.xml.flat",
-        "source": "com.nathan.workspace.app-main-49:/layout/item_history.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_logout.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_logout.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\layout_fragment_workflow.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\layout\\fragment_workflow.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_launcher_background.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_key.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_key.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/layout_fragment_profile.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/layout/fragment_profile.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_person.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_person.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_check.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_check.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_eye.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_eye.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_code.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_code.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_web.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_web.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_play.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_play.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_logout.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_logout.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_launcher_foreground.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_launcher_foreground.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/layout_fragment_workflow.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/layout/fragment_workflow.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\layout_fragment_profile.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\layout\\fragment_profile.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_github_mark.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_github_mark.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\layout_fragment_webview.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\layout\\fragment_webview.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_nav_color.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/nav_color.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_stop.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_stop.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/layout_activity_main.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/layout/activity_main.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\menu_bottom_nav.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\menu\\bottom_nav.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/layout_item_history.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/layout/item_history.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_close.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_close.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/layout_fragment_webview.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/layout/fragment_webview.xml"
     },
     {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_nav_color.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\nav_color.xml"
-    },
-    {
-        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-merged_res-47:\\drawable_ic_launcher_background.xml.flat",
-        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-49:\\drawable\\ic_launcher_background.xml"
+        "merged": "com.nathan.workspace.app-merged_res-38:/drawable_ic_person.xml.flat",
+        "source": "com.nathan.workspace.app-main-40:/drawable/ic_person.xml"
     }
 ]

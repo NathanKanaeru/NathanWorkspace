@@ -1,9 +1,14 @@
 R_DEF: Internal format may change without notice
 local
 color black
-color purple_500
-color purple_700
-color teal_200
+color blue_dark
+color blue_primary
+color card_dark
+color on_surface_dark
+color splash_background
+color surface_dark
+color surface_light
+color teal_accent
 color white
 drawable ic_check
 drawable ic_close
@@ -39,8 +44,6 @@ id iv_avatar
 id iv_icon
 id iv_logo
 id layout_history
-id nav_graph
-id nav_host
 id profileFragment
 id progress_login
 id progress_logs
@@ -48,7 +51,6 @@ id scroll_logs
 id scroll_root
 id til_code
 id til_token
-id toolbar
 id tv_empty
 id tv_hint
 id tv_history_header
@@ -63,6 +65,7 @@ id tv_user_login
 id tv_user_name
 id tv_workflow_desc
 id tv_workflow_title
+id viewpager
 id webview
 id webviewFragment
 id workflowFragment
@@ -74,7 +77,7 @@ layout fragment_workflow
 layout item_history
 menu bottom_nav
 mipmap ic_launcher
-navigation nav_graph
 string app_name
 string loading
 style Theme.MyApp
+style Theme.MyApp.Splash

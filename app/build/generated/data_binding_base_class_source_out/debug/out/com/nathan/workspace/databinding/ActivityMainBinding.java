@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentContainerView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
+import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.nathan.workspace.R;
 import java.lang.NullPointerException;
@@ -24,13 +24,13 @@ public final class ActivityMainBinding implements ViewBinding {
   public final BottomNavigationView bottomNav;
 
   @NonNull
-  public final FragmentContainerView navHost;
+  public final ViewPager2 viewpager;
 
   private ActivityMainBinding(@NonNull ConstraintLayout rootView,
-      @NonNull BottomNavigationView bottomNav, @NonNull FragmentContainerView navHost) {
+      @NonNull BottomNavigationView bottomNav, @NonNull ViewPager2 viewpager) {
     this.rootView = rootView;
     this.bottomNav = bottomNav;
-    this.navHost = navHost;
+    this.viewpager = viewpager;
   }
 
   @Override
@@ -66,13 +66,13 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.nav_host;
-      FragmentContainerView navHost = ViewBindings.findChildViewById(rootView, id);
-      if (navHost == null) {
+      id = R.id.viewpager;
+      ViewPager2 viewpager = ViewBindings.findChildViewById(rootView, id);
+      if (viewpager == null) {
         break missingId;
       }
 
-      return new ActivityMainBinding((ConstraintLayout) rootView, bottomNav, navHost);
+      return new ActivityMainBinding((ConstraintLayout) rootView, bottomNav, viewpager);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
