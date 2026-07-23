@@ -5,11 +5,13 @@ color blue_dark
 color blue_primary
 color card_dark
 color on_surface_dark
+color ripple_selector
 color splash_background
 color surface_dark
 color surface_light
 color teal_accent
 color white
+drawable bg_nav_active
 drawable ic_check
 drawable ic_close
 drawable ic_code
@@ -36,6 +38,7 @@ id card_logs
 id card_profile
 id card_settings
 id card_user
+id divider
 id et_code
 id et_token
 id fab_run
@@ -79,5 +82,7 @@ menu bottom_nav
 mipmap ic_launcher
 string app_name
 string loading
+style MyActiveIndicator
 style Theme.MyApp
 style Theme.MyApp.Splash
+style Widget.MyApp.BottomNavigationView

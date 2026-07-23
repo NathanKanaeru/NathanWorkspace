@@ -30,18 +30,35 @@ object GitHubApi {
 
     suspend fun validateToken(token: String): Result<UserInfo> = withContext(Dispatchers.IO) {
         try {
-            val response = authRequest("$API_BASE/user", token).build().let { client.newCall(it).execute() }
+            val request = authRequest("$API_BASE/user", token).build()
+            val response = client.newCall(request).execute()
             val body = response.body?.string()
-            if (!response.isSuccessful || body == null)
-                return@withContext Result.failure(Exception("Token invalid: ${response.code}"))
 
-            val json = JsonParser.parseString(body).asJsonObject
+            if (!response.isSuccessful) {
+                val msg = when (response.code) {
+                    401 -> "Token tidak valid"
+                    403 -> "Akses ditolak (rate limit?)"
+                    else -> "Error ${response.code}: ${response.message}"
+                }
+                return@withContext Result.failure(Exception(msg))
+            }
+            if (body.isNullOrBlank())
+                return@withContext Result.failure(Exception("Respon kosong dari server"))
+
+            val json = try {
+                JsonParser.parseString(body).asJsonObject
+            } catch (e: Exception) {
+                return@withContext Result.failure(Exception("Format respon tidak valid"))
+            }
+
             Result.success(UserInfo(
-                json.get("login")?.asString ?: "",
-                json.get("name")?.asString ?: "",
-                json.get("avatar_url")?.asString ?: ""
+                login = json.get("login")?.asString ?: "",
+                name = json.get("name")?.asString ?: "",
+                avatarUrl = json.get("avatar_url")?.asString ?: ""
             ))
-        } catch (e: Exception) { Result.failure(e) }
+        } catch (e: Exception) {
+            Result.failure(Exception("Gagal terhubung: ${e.message}"))
+        }
     }
 
     suspend fun triggerWorkflow(token: String, code: String): Result<Unit> = withContext(Dispatchers.IO) {

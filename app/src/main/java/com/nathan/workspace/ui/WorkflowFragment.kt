@@ -2,17 +2,16 @@ package com.nathan.workspace.ui
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.nathan.workspace.R
 import com.nathan.workspace.databinding.FragmentWorkflowBinding
 import com.nathan.workspace.databinding.ItemHistoryBinding
@@ -54,53 +53,59 @@ class WorkflowFragment : Fragment() {
             viewModel.cancelRun(token)
         }
 
-        lifecycleScope.launch {
-            viewModel.activeRun.collect { active ->
-                if (active != null && active.isRunning) {
-                    showRunningState(active.run.id)
-                    binding.tvLogs.text = if (active.logs.isBlank()) "Waiting for logs..." else active.logs
-                    binding.scrollLogs.post { binding.scrollLogs.fullScroll(View.FOCUS_DOWN) }
-                } else {
-                    showIdleState()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.activeRun.collect { active ->
+                    if (_binding == null) return@collect
+                    if (active != null && active.isRunning) {
+                        showRunningState(active.run.id)
+                        binding.tvLogs.text = if (active.logs.isBlank()) "Waiting for logs..." else active.logs
+                        binding.scrollLogs.post { binding.scrollLogs.fullScroll(View.FOCUS_DOWN) }
+                    } else {
+                        showIdleState()
+                    }
                 }
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.history.collect { entries ->
-                binding.layoutHistory.removeAllViews()
-                if (entries.isEmpty()) {
-                    binding.tvHistoryHeader.isVisible = false
-                    binding.layoutHistory.isVisible = false
-                    binding.tvEmpty.isVisible = viewModel.activeRun.value == null
-                } else {
-                    binding.tvHistoryHeader.isVisible = true
-                    binding.layoutHistory.isVisible = true
-                    binding.tvEmpty.isVisible = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.history.collect { entries ->
+                    if (_binding == null) return@collect
+                    binding.layoutHistory.removeAllViews()
+                    if (entries.isEmpty()) {
+                        binding.tvHistoryHeader.isVisible = false
+                        binding.layoutHistory.isVisible = false
+                        binding.tvEmpty.isVisible = viewModel.activeRun.value == null
+                    } else {
+                        binding.tvHistoryHeader.isVisible = true
+                        binding.layoutHistory.isVisible = true
+                        binding.tvEmpty.isVisible = false
 
-                    entries.forEachIndexed { index, entry ->
-                        val itemBinding = ItemHistoryBinding.inflate(LayoutInflater.from(context), binding.layoutHistory, true)
-                        val isSuccess = entry.run.conclusion == "success"
+                        entries.forEachIndexed { index, entry ->
+                            val itemBinding = ItemHistoryBinding.inflate(LayoutInflater.from(context), binding.layoutHistory, true)
+                            val isSuccess = entry.run.conclusion == "success"
 
-                        itemBinding.ivIcon.setImageResource(
-                            if (isSuccess) R.drawable.ic_check else R.drawable.ic_close
-                        )
-                        itemBinding.ivIcon.setColorFilter(
-                            if (isSuccess) Color.rgb(76, 175, 80) else Color.rgb(244, 67, 54)
-                        )
+                            itemBinding.ivIcon.setImageResource(
+                                if (isSuccess) R.drawable.ic_check else R.drawable.ic_close
+                            )
+                            itemBinding.ivIcon.setColorFilter(
+                                if (isSuccess) Color.rgb(76, 175, 80) else Color.rgb(244, 67, 54)
+                            )
 
-                        itemBinding.tvTitle.text = "Run #${entry.run.id} - ${entry.run.conclusion?.uppercase() ?: "UNKNOWN"}"
-                        itemBinding.tvTime.text = entry.endedAt
+                            itemBinding.tvTitle.text = "Run #${entry.run.id} - ${entry.run.conclusion?.uppercase() ?: "UNKNOWN"}"
+                            itemBinding.tvTime.text = entry.endedAt
 
-                        itemBinding.btnDelete.setOnClickListener {
-                            viewModel.deleteHistoryEntry(token, index)
+                            itemBinding.btnDelete.setOnClickListener {
+                                viewModel.deleteHistoryEntry(token, index)
+                            }
                         }
                     }
                 }
             }
         }
 
-        if (viewModel.activeRun.value != null) showRunningState(viewModel.activeRun.value!!.run.id)
+        viewModel.activeRun.value?.let { if (it.isRunning) showRunningState(it.run.id) }
     }
 
     private fun showRunningState(@Suppress("UNUSED_PARAMETER") runId: Long) {

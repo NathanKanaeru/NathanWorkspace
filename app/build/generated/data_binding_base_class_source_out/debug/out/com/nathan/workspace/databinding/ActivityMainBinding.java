@@ -24,12 +24,17 @@ public final class ActivityMainBinding implements ViewBinding {
   public final BottomNavigationView bottomNav;
 
   @NonNull
+  public final View divider;
+
+  @NonNull
   public final ViewPager2 viewpager;
 
   private ActivityMainBinding(@NonNull ConstraintLayout rootView,
-      @NonNull BottomNavigationView bottomNav, @NonNull ViewPager2 viewpager) {
+      @NonNull BottomNavigationView bottomNav, @NonNull View divider,
+      @NonNull ViewPager2 viewpager) {
     this.rootView = rootView;
     this.bottomNav = bottomNav;
+    this.divider = divider;
     this.viewpager = viewpager;
   }
 
@@ -66,13 +71,19 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.divider;
+      View divider = ViewBindings.findChildViewById(rootView, id);
+      if (divider == null) {
+        break missingId;
+      }
+
       id = R.id.viewpager;
       ViewPager2 viewpager = ViewBindings.findChildViewById(rootView, id);
       if (viewpager == null) {
         break missingId;
       }
 
-      return new ActivityMainBinding((ConstraintLayout) rootView, bottomNav, viewpager);
+      return new ActivityMainBinding((ConstraintLayout) rootView, bottomNav, divider, viewpager);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
