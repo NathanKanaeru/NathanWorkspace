@@ -1,5 +1,6 @@
 package com.nathan.workspace.api
 
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
@@ -20,14 +21,22 @@ object GitHubApi {
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
+        .followRedirects(false)
+        .followSslRedirects(false)
         .build()
 
     private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
+
+    private fun JsonElement?.safeString(): String {
+        if (this == null || isJsonNull) return ""
+        return asString
+    }
 
     private fun authRequest(url: String, token: String) = Request.Builder()
         .url(url)
         .header("Authorization", "Bearer $token")
         .header("Accept", "application/vnd.github+json")
+        .header("User-Agent", "NathanWorkspace-Android/1.3")
 
     suspend fun validateToken(token: String): Result<UserInfo> = withContext(Dispatchers.IO) {
         try {
@@ -57,9 +66,9 @@ object GitHubApi {
             val json = parsed.asJsonObject
 
             Result.success(UserInfo(
-                login = json.get("login")?.asString ?: "",
-                name = json.get("name")?.asString ?: "",
-                avatarUrl = json.get("avatar_url")?.asString ?: ""
+                login = json.get("login").safeString(),
+                name = json.get("name").safeString(),
+                avatarUrl = json.get("avatar_url").safeString()
             ))
         } catch (e: Exception) {
             Result.failure(Exception("Gagal terhubung: ${e.message}"))
@@ -90,11 +99,11 @@ object GitHubApi {
 
     private fun parseWorkflowRun(obj: JsonObject) = WorkflowRunInfo(
         id = obj.get("id").asLong,
-        status = obj.get("status")?.asString ?: "unknown",
-        conclusion = obj.get("conclusion")?.asString,
-        createdAt = obj.get("created_at")?.asString ?: "",
-        updatedAt = obj.get("updated_at")?.asString ?: "",
-        htmlUrl = obj.get("html_url")?.asString ?: ""
+        status = obj.get("status").safeString().ifBlank { "unknown" },
+        conclusion = obj.get("conclusion").safeString().ifBlank { null },
+        createdAt = obj.get("created_at").safeString(),
+        updatedAt = obj.get("updated_at").safeString(),
+        htmlUrl = obj.get("html_url").safeString()
     )
 
     suspend fun getLatestRun(token: String): Result<WorkflowRunInfo> = withContext(Dispatchers.IO) {
