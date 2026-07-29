@@ -29,6 +29,16 @@ APK at `app/build/outputs/apk/debug/app-debug.apk`.
 - **Logout** clears both pref files, starts `LoginActivity` with `FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TASK`, calls `finishAffinity()`.
 - **No ProGuard** (`proguard-rules.pro` referenced but missing).
 
+## Design system
+
+- **Dark scheme primary** (DESIGN.md): `primary=#a6c8ff`, `surface=#111318`, `background=#111318`. DayNight: values/themes.xml = light scheme, values-night/themes.xml = dark scheme.
+- **Inter font** via `res/font/inter.xml` (falls back to system sans-serif; drop Inter TTF files in `res/font/` to activate).
+- **M3 theming**: `Theme.Material3.Light.NoActionBar` / `Theme.Material3.Dark.NoActionBar`. All M3 color attributes set explicitly from DESIGN.md tokens.
+- **Rounded corners**: cards=12dp (`rounded.md`), buttons=9999dp (`rounded.full`/pill), inputs=4dp (`rounded.xs`), chips=8dp (`rounded.sm`).
+- **Spacing**: page padding=24dp (`spacing.lg`), card inner padding=16dp (`spacing.md`), between cards=24dp (`spacing.lg`).
+- **Tonal elevation**: no shadows on cards (`cardElevation=0dp`), hierarchy via surface container colors.
+- **Input fields**: FilledBox style (not OutlinedBox) per M3 filled input convention.
+
 ## Project structure
 
 ```
@@ -49,5 +59,5 @@ app/src/main/java/com/nathan/workspace/
 - `studentcolab/` at project root is excluded via `.gitignore` — unrelated SA-MP scripts, not part of the Android app.
 - `WorkflowFragment` reads user info directly from `SharedPreferences("app")`, not from the ViewModel.
 - History entries don't show logs inline after completion — log card is hidden via `showIdleState()`.
-- `triggerWorkflow` interpolates `$code` directly into JSON — special chars in CRD code will break the payload.
+- `triggerWorkflow` now escapes backslashes and double-quotes in CRD code to prevent JSON injection.
 - Splash screen theme (`Theme.MyApp.Splash`) is applied to `LoginActivity` in the manifest. `installSplashScreen()` is called before `super.onCreate()`.

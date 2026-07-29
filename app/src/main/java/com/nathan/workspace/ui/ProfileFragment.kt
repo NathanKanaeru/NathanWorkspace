@@ -2,7 +2,6 @@ package com.nathan.workspace.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.nathan.workspace.LoginActivity
-import com.nathan.workspace.R
 import com.nathan.workspace.databinding.FragmentProfileBinding
 import com.nathan.workspace.viewmodel.LogEntry
 
@@ -38,7 +36,6 @@ class ProfileFragment : Fragment() {
         binding.tvUserName.text = name?.ifBlank { login }
         binding.tvUserLogin.text = "@$login"
 
-        // Load workflow stats
         loadWorkflowStats()
 
         binding.btnLogout.setOnClickListener {
@@ -68,10 +65,6 @@ class ProfileFragment : Fragment() {
                     binding.tvTotalRuns.text = total.toString()
                     binding.tvSuccessRate.text = "$successRate%"
                     binding.tvLastRun.text = history.first().endedAt.take(10)
-
-                    binding.tvTotalRuns.setTextColor(
-                        if (successRate >= 50) Color.rgb(52, 168, 83) else Color.rgb(217, 48, 37)
-                    )
                 } else {
                     binding.tvTotalRuns.text = "0"
                     binding.tvSuccessRate.text = "-"

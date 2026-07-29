@@ -1,20 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.MyApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/blue_primary</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorPrimaryContainer">#FFD2E3FC</item>
-        <item name="colorOnPrimaryContainer">#FF041E49</item>
-        <item name="colorSecondary">@color/teal_accent</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="colorSurface">@color/surface_light</item>
-        <item name="colorOnSurface">#FF1F1F1F</item>
-        <item name="colorOnSurfaceVariant">#FF5F6368</item>
-        <item name="colorOutline">#FFDADCE0</item>
-        <item name="colorError">#FFD93025</item>
+    <!-- Light scheme (DayNight default: used in system light mode)
+         Based on DESIGN.md opposite_scheme (light) -->
+    <style name="Theme.MyApp" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/light_primary</item>
+        <item name="colorOnPrimary">@color/light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/light_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/light_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/light_secondary</item>
+        <item name="colorOnSecondary">@color/light_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/light_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/light_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/light_tertiary</item>
+        <item name="colorOnTertiary">@color/light_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/light_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/light_onTertiaryContainer</item>
+        <item name="colorError">@color/light_error</item>
+        <item name="colorOnError">@color/light_onError</item>
+        <item name="colorErrorContainer">@color/light_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/light_onErrorContainer</item>
+        <item name="colorSurface">@color/light_surface</item>
+        <item name="colorOnSurface">@color/light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/light_onSurfaceVariant</item>
+        <item name="colorOutline">@color/light_outline</item>
+        <item name="colorOutlineVariant">@color/light_outlineVariant</item>
+        <item name="colorOnBackground">@color/light_onBackground</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowBackground">@color/surface_light</item>
+        <item name="android:windowBackground">@color/light_background</item>
         <item name="bottomNavigationStyle">@style/Widget.MyApp.BottomNavigationView</item>
     </style>
 
@@ -24,7 +38,7 @@
     </style>
 
     <style name="MyActiveIndicator">
-        <item name="android:color">#1A00BFA5</item>
+        <item name="android:color">#1A3d5f90</item>
         <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
     </style>
 

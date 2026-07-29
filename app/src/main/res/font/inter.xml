@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- To use Inter properly, download Inter TTF files from https://fonts.google.com/specimen/Inter
+         and place them in this directory as:
+         inter-regular.ttf, inter-medium.ttf, inter-bold.ttf
+
+         Then reference them in the font-family XML with appropriate weight attributes.
+         For now, falls back to the system sans-serif which is visually similar. -->
+    <font
+        android:fontFamily="sans-serif"
+        android:fontWeight="400"
+        android:fontStyle="normal" />
+</font-family>

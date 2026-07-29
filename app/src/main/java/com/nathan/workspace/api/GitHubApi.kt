@@ -36,7 +36,28 @@ object GitHubApi {
         .url(url)
         .header("Authorization", "Bearer $token")
         .header("Accept", "application/vnd.github+json")
-        .header("User-Agent", "NathanWorkspace-Android/1.3")
+        .header("User-Agent", "NathanWorkspace-Android/1.4")
+
+    private fun parseJson(body: String): Result<JsonObject> {
+        return try {
+            val parsed = JsonParser.parseString(body)
+            if (!parsed.isJsonObject)
+                Result.failure(Exception("Respon bukan JSON object: ${body.take(200)}"))
+            else
+                Result.success(parsed.asJsonObject)
+        } catch (e: Exception) {
+            Result.failure(Exception("Gagal parse JSON: ${body.take(200)}"))
+        }
+    }
+
+    private fun parseWorkflowRun(obj: JsonObject) = WorkflowRunInfo(
+        id = obj.get("id").asLong,
+        status = obj.get("status").safeString().ifBlank { "unknown" },
+        conclusion = obj.get("conclusion").safeString().ifBlank { null },
+        createdAt = obj.get("created_at").safeString(),
+        updatedAt = obj.get("updated_at").safeString(),
+        htmlUrl = obj.get("html_url").safeString()
+    )
 
     suspend fun validateToken(token: String): Result<UserInfo> = withContext(Dispatchers.IO) {
         try {
@@ -77,34 +98,14 @@ object GitHubApi {
 
     suspend fun triggerWorkflow(token: String, code: String): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            val body = """{"ref":"main","inputs":{"student_code":"$code"}}""".toRequestBody(jsonMediaType)
+            val escapedCode = code.replace("\\", "\\\\").replace("\"", "\\\"")
+            val body = """{"ref":"main","inputs":{"student_code":"$escapedCode"}}""".toRequestBody(jsonMediaType)
             val response = authRequest("$API_BASE/repos/$OWNER/$REPO/actions/workflows/$WORKFLOW/dispatches", token)
                 .post(body).build().let { client.newCall(it).execute() }
             if (response.isSuccessful) Result.success(Unit)
             else Result.failure(Exception("Trigger failed: ${response.code}"))
         } catch (e: Exception) { Result.failure(e) }
     }
-
-    private fun parseJson(body: String): Result<JsonObject> {
-        return try {
-            val parsed = JsonParser.parseString(body)
-            if (!parsed.isJsonObject)
-                Result.failure(Exception("Respon bukan JSON object: ${body.take(200)}"))
-            else
-                Result.success(parsed.asJsonObject)
-        } catch (e: Exception) {
-            Result.failure(Exception("Gagal parse JSON: ${body.take(200)}"))
-        }
-    }
-
-    private fun parseWorkflowRun(obj: JsonObject) = WorkflowRunInfo(
-        id = obj.get("id").asLong,
-        status = obj.get("status").safeString().ifBlank { "unknown" },
-        conclusion = obj.get("conclusion").safeString().ifBlank { null },
-        createdAt = obj.get("created_at").safeString(),
-        updatedAt = obj.get("updated_at").safeString(),
-        htmlUrl = obj.get("html_url").safeString()
-    )
 
     suspend fun getLatestRun(token: String): Result<WorkflowRunInfo> = withContext(Dispatchers.IO) {
         try {

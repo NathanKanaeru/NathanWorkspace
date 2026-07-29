@@ -4,23 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="16dp"
+    app:cardCornerRadius="12dp"
     app:cardElevation="0dp"
-    app:contentPadding="16dp"
-    app:strokeColor="?attr/colorOutline"
+    app:contentPadding="12dp"
+    app:strokeColor="?attr/colorOutlineVariant"
     app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Status icon circle background -->
         <View
             android:id="@+id/v_status_bg"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@drawable/bg_status_circle"
-            android:backgroundTint="#2034A853"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,7 +32,6 @@
             app:layout_constraintStart_toStartOf="@id/v_status_bg"
             app:layout_constraintTop_toTopOf="@id/v_status_bg" />
 
-        <!-- Run ID -->
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
@@ -42,12 +39,10 @@
             android:layout_marginStart="12dp"
             android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
             android:textColor="?attr/colorOnSurface"
-            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/tv_conclusion"
             app:layout_constraintStart_toEndOf="@id/v_status_bg"
             app:layout_constraintTop_toTopOf="@id/v_status_bg" />
 
-        <!-- Conclusion chip -->
         <TextView
             android:id="@+id/tv_conclusion"
             android:layout_width="wrap_content"
@@ -56,12 +51,11 @@
             android:paddingHorizontal="10dp"
             android:text="SUCCESS"
             android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-            android:textColor="@color/white"
+            android:textColor="@color/onPrimary"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/btn_view"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Time -->
         <TextView
             android:id="@+id/tv_time"
             android:layout_width="0dp"
@@ -74,7 +68,6 @@
             app:layout_constraintStart_toEndOf="@id/v_status_bg"
             app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
-        <!-- View on GitHub button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_view"
             style="@style/Widget.Material3.Button.TextButton"
@@ -83,12 +76,11 @@
             android:padding="0dp"
             app:icon="@drawable/ic_eye"
             app:iconSize="20dp"
-            app:iconTint="@color/blue_primary"
+            app:iconTint="?attr/colorPrimary"
             app:layout_constraintBottom_toBottomOf="@id/v_status_bg"
             app:layout_constraintEnd_toStartOf="@id/btn_rerun"
             app:layout_constraintTop_toTopOf="@id/v_status_bg" />
 
-        <!-- Re-run button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_rerun"
             style="@style/Widget.Material3.Button.TextButton"
@@ -97,12 +89,11 @@
             android:padding="0dp"
             app:icon="@drawable/ic_play"
             app:iconSize="20dp"
-            app:iconTint="@color/blue_primary"
+            app:iconTint="?attr/colorPrimary"
             app:layout_constraintBottom_toBottomOf="@id/v_status_bg"
             app:layout_constraintEnd_toStartOf="@id/btn_delete"
             app:layout_constraintTop_toTopOf="@id/v_status_bg" />
 
-        <!-- Delete button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_delete"
             style="@style/Widget.Material3.Button.TextButton"
@@ -116,7 +107,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/v_status_bg" />
 
-        <!-- Log preview (expandable) -->
         <TextView
             android:id="@+id/tv_log_preview"
             android:layout_width="0dp"
@@ -126,7 +116,7 @@
             android:fontFamily="monospace"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            android:textColor="@color/logs_text"
+            android:textColor="#e1e2e9"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

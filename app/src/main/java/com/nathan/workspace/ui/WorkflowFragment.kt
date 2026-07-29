@@ -5,13 +5,15 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.ScrollView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.core.view.isVisible
@@ -53,7 +55,6 @@ class WorkflowFragment : Fragment() {
         binding.tvUserName.text = name?.ifBlank { login }
         binding.tvUserLogin.text = "@$login"
 
-        // Start button (embedded in card_input)
         binding.btnStart.setOnClickListener {
             val code = binding.etCode.text.toString().trim()
             if (code.isBlank()) return@setOnClickListener
@@ -61,12 +62,10 @@ class WorkflowFragment : Fragment() {
             viewModel.startRun(code, token)
         }
 
-        // Cancel button
         binding.btnCancel.setOnClickListener {
             viewModel.cancelRun(token)
         }
 
-        // View on GitHub button
         binding.btnViewGithub.setOnClickListener {
             val state = viewModel.uiState.value
             if (state is WorkflowUiState.Running) {
@@ -74,14 +73,12 @@ class WorkflowFragment : Fragment() {
             }
         }
 
-        // Copy logs button
         binding.btnCopyLogs.setOnClickListener {
             val state = viewModel.uiState.value
             val logs = if (state is WorkflowUiState.Running) state.logs else ""
             copyToClipboard(logs)
         }
 
-        // Clear history button
         binding.btnClearHistory.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Clear History")
@@ -91,7 +88,6 @@ class WorkflowFragment : Fragment() {
                 .show()
         }
 
-        // Observe UI state
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -119,12 +115,9 @@ class WorkflowFragment : Fragment() {
         }
     }
 
-    // ──── STATE RENDERERS ────
-
     private fun renderIdle() {
         if (_binding == null) return
 
-        // Show input card, hide active card
         binding.cardInput.isVisible = true
         binding.cardActive.isVisible = false
         binding.cardActive.alpha = 1f
@@ -132,16 +125,13 @@ class WorkflowFragment : Fragment() {
         binding.cardInput.alpha = 1f
         binding.cardInput.translationY = 0f
 
-        // Show repo info, hide run info in header
         binding.layoutRepoInfo.isVisible = true
         binding.layoutUserInfo.isVisible = true
         binding.layoutRunInfo.isVisible = false
 
-        // Reset button state
         binding.btnStart.text = "Start Workflow"
         binding.btnStart.isEnabled = true
 
-        // History visibility
         val hasHistory = viewModel.history.value.isNotEmpty()
         binding.layoutHistoryHeader.isVisible = hasHistory
         binding.layoutHistory.isVisible = hasHistory
@@ -152,7 +142,6 @@ class WorkflowFragment : Fragment() {
     private fun renderStarting(@Suppress("UNUSED_PARAMETER") state: WorkflowUiState.Starting) {
         if (_binding == null) return
 
-        // Update header to show run info
         binding.layoutRepoInfo.isVisible = false
         binding.layoutUserInfo.isVisible = false
         binding.layoutRunInfo.isVisible = true
@@ -160,10 +149,8 @@ class WorkflowFragment : Fragment() {
         binding.chipStatus.text = "QUEUED"
         binding.chipStatus.setBackgroundResource(R.drawable.bg_chip_queued)
 
-        // Animate: fade out input card, fade in active card
         animateCardTransition(binding.cardInput, binding.cardActive)
 
-        // Show queued state in active card
         binding.tvActiveRunId.text = "Starting..."
         binding.chipActiveStatus.text = "QUEUED"
         binding.chipActiveStatus.setBackgroundResource(R.drawable.bg_chip_queued)
@@ -174,11 +161,9 @@ class WorkflowFragment : Fragment() {
     private fun renderRunning(state: WorkflowUiState.Running) {
         if (_binding == null) return
 
-        // Ensure active card visible, input card hidden
         binding.cardActive.isVisible = true
         binding.cardInput.isVisible = false
 
-        // Update header
         binding.layoutRepoInfo.isVisible = false
         binding.layoutUserInfo.isVisible = false
         binding.layoutRunInfo.isVisible = true
@@ -190,14 +175,12 @@ class WorkflowFragment : Fragment() {
             if (isQueued) R.drawable.bg_chip_queued else R.drawable.bg_chip_running
         )
 
-        // Update active card
         binding.tvActiveRunId.text = "Run #${state.runId}"
         binding.chipActiveStatus.text = if (isQueued) "QUEUED" else "RUNNING"
         binding.chipActiveStatus.setBackgroundResource(
             if (isQueued) R.drawable.bg_chip_queued else R.drawable.bg_chip_running
         )
 
-        // Update logs
         binding.tvLogs.text = if (state.logs.isBlank()) {
             if (isQueued) "Waiting for runner..." else "Waiting for logs..."
         } else {
@@ -205,13 +188,10 @@ class WorkflowFragment : Fragment() {
         }
         binding.btnCopyLogs.isVisible = state.logs.isNotBlank()
 
-        // Auto-scroll logs
         binding.scrollLogs.post { binding.scrollLogs.fullScroll(View.FOCUS_DOWN) }
 
-        // Hide empty state
         binding.tvEmpty.isVisible = false
 
-        // Status chip bounce animation
         animateStatusChip(binding.chipStatus)
     }
 
@@ -222,7 +202,6 @@ class WorkflowFragment : Fragment() {
         val isSuccess = entry.run.conclusion == "success"
         val isCancelled = entry.run.conclusion == "cancelled" || entry.run.conclusion == "canceled"
 
-        // Update header
         binding.layoutRunInfo.isVisible = true
         binding.tvRunTitle.text = "Run #${entry.run.id}"
         binding.chipStatus.text = when {
@@ -238,7 +217,6 @@ class WorkflowFragment : Fragment() {
             }
         )
 
-        // Update active card
         binding.chipActiveStatus.text = when {
             isSuccess -> "SUCCESS"
             isCancelled -> "CANCELLED"
@@ -253,10 +231,8 @@ class WorkflowFragment : Fragment() {
         )
         binding.progressActive.isVisible = false
 
-        // Show logs in active card
         binding.tvLogs.text = entry.logs.ifBlank { "No logs available" }
 
-        // After a brief delay, transition to idle
         binding.cardActive.postDelayed({
             if (_binding != null) {
                 renderIdle()
@@ -267,16 +243,12 @@ class WorkflowFragment : Fragment() {
     private fun renderError(state: WorkflowUiState.Error) {
         if (_binding == null) return
 
-        // Show snackbar
         android.widget.Toast.makeText(requireContext(), state.message, android.widget.Toast.LENGTH_LONG).show()
 
-        // Return to idle if not already
         if (viewModel.activeRun.value == null) {
             renderIdle()
         }
     }
-
-    // ──── ANIMATIONS ────
 
     private fun animateCardTransition(hide: View, show: View) {
         hide.animate()
@@ -317,8 +289,6 @@ class WorkflowFragment : Fragment() {
             .start()
     }
 
-    // ──── HISTORY ────
-
     private fun renderHistory(entries: List<LogEntry>) {
         if (_binding == null) return
 
@@ -348,21 +318,20 @@ class WorkflowFragment : Fragment() {
             val isSuccess = entry.run.conclusion == "success"
             val isCancelled = entry.run.conclusion == "cancelled" || entry.run.conclusion == "canceled"
 
-            // Status icon
             val iconRes = when {
                 isSuccess -> R.drawable.ic_check
                 isCancelled -> R.drawable.ic_close
                 else -> R.drawable.ic_close
             }
             val iconColor = when {
-                isSuccess -> Color.rgb(52, 168, 83)   // success_green
-                isCancelled -> Color.rgb(251, 188, 4) // warning_amber
-                else -> Color.rgb(217, 48, 37)        // error
+                isSuccess -> Color.rgb(82, 199, 122)
+                isCancelled -> Color.rgb(245, 197, 66)
+                else -> Color.rgb(255, 138, 128)
             }
             val iconBgColor = when {
-                isSuccess -> 0x2034A853
-                isCancelled -> 0x20FBBC04
-                else -> 0x20D93025
+                isSuccess -> 0x2052C77A
+                isCancelled -> 0x20F5C542
+                else -> 0x20FF8A80
             }
 
             itemBinding.ivIcon.setImageResource(iconRes)
@@ -370,10 +339,8 @@ class WorkflowFragment : Fragment() {
             itemBinding.vStatusBg.backgroundTintList =
                 android.content.res.ColorStateList.valueOf(iconBgColor)
 
-            // Title
             itemBinding.tvTitle.text = "Run #${entry.run.id}"
 
-            // Conclusion chip
             val conclusionText = when {
                 isSuccess -> "SUCCESS"
                 isCancelled -> "CANCELLED"
@@ -388,10 +355,8 @@ class WorkflowFragment : Fragment() {
                 }
             )
 
-            // Time
             itemBinding.tvTime.text = entry.endedAt
 
-            // Log preview
             if (entry.logs.isNotBlank()) {
                 val preview = entry.logs.take(200).replace("\n", " ").trim()
                 itemBinding.tvLogPreview.text = preview
@@ -403,22 +368,18 @@ class WorkflowFragment : Fragment() {
                 itemBinding.tvLogPreview.isVisible = false
             }
 
-            // View button
             itemBinding.btnView.setOnClickListener {
                 openInBrowser(entry.run.htmlUrl)
             }
 
-            // Re-run button
             itemBinding.btnRerun.setOnClickListener {
                 viewModel.reRunRun(token, entry)
             }
 
-            // Delete button
             itemBinding.btnDelete.setOnClickListener {
                 viewModel.deleteHistoryEntry(token, index)
             }
 
-            // Entry animation (staggered scale)
             itemBinding.root.scaleX = 0.95f
             itemBinding.root.scaleY = 0.95f
             itemBinding.root.alpha = 0f
@@ -433,8 +394,6 @@ class WorkflowFragment : Fragment() {
             }
         }
     }
-
-    // ──── HELPERS ────
 
     private fun openInBrowser(url: String) {
         if (url.isBlank()) return
@@ -453,14 +412,13 @@ class WorkflowFragment : Fragment() {
 
     private fun showLogsDialog(entry: LogEntry) {
         val logText = entry.logs.ifBlank { "No logs available" }
-        // Use a simple dialog with scrollable text
-        val scrollView = android.widget.ScrollView(requireContext()).apply {
-            val tv = android.widget.TextView(context).apply {
+        val scrollView = ScrollView(requireContext()).apply {
+            val tv = TextView(context).apply {
                 text = logText
-                setTextColor(android.graphics.Color.parseColor("#00E676"))
-                setBackgroundColor(android.graphics.Color.parseColor("#1A1A2E"))
+                setTextColor(Color.parseColor("#e1e2e9"))
+                setBackgroundColor(Color.parseColor("#191c20"))
                 textSize = 12f
-                typeface = android.graphics.Typeface.MONOSPACE
+                typeface = Typeface.MONOSPACE
                 setPadding(24, 24, 24, 24)
                 setLineSpacing(0f, 1.2f)
             }

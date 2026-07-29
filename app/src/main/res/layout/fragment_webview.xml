@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
 
-    <!-- Toolbar -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_toolbar"
         android:layout_width="0dp"
@@ -16,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:strokeColor="?attr/colorOutline"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="1dp">
 
         <LinearLayout
@@ -26,7 +25,6 @@
             android:orientation="horizontal"
             android:paddingHorizontal="4dp">
 
-            <!-- Back button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_back"
                 style="@style/Widget.Material3.Button.TextButton"
@@ -34,13 +32,11 @@
                 android:layout_height="40dp"
                 android:padding="0dp"
                 android:enabled="false"
-                android:importantForAccessibility="yes"
                 android:contentDescription="Go back"
                 app:icon="@drawable/ic_code"
                 app:iconSize="20dp"
                 app:iconTint="?attr/colorOnSurfaceVariant" />
 
-            <!-- Forward button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_forward"
                 style="@style/Widget.Material3.Button.TextButton"
@@ -48,35 +44,31 @@
                 android:layout_height="40dp"
                 android:padding="0dp"
                 android:enabled="false"
-                android:importantForAccessibility="yes"
                 android:contentDescription="Go forward"
+                android:rotation="180"
                 app:icon="@drawable/ic_eye"
                 app:iconSize="20dp"
-                app:iconTint="?attr/colorOnSurfaceVariant"
-                android:rotation="180" />
+                app:iconTint="?attr/colorOnSurfaceVariant" />
 
-            <!-- URL text -->
             <TextView
                 android:id="@+id/tv_url"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
+                android:ellipsize="start"
                 android:gravity="center_vertical"
+                android:maxLines="1"
                 android:paddingHorizontal="12dp"
                 android:text="remotedesktop.google.com"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:ellipsize="start"
-                android:maxLines="1" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <!-- Refresh button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_refresh"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:padding="0dp"
-                android:importantForAccessibility="yes"
                 android:contentDescription="Refresh"
                 app:icon="@drawable/ic_play"
                 app:iconSize="20dp"
@@ -86,20 +78,18 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Progress bar -->
     <ProgressBar
         android:id="@+id/progress_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="3dp"
         android:indeterminate="true"
-        android:indeterminateTint="@color/blue_primary"
+        android:indeterminateTint="?attr/colorPrimary"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/card_toolbar" />
 
-    <!-- WebView -->
     <WebView
         android:id="@+id/webview"
         android:layout_width="0dp"
@@ -109,7 +99,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/progress_bar" />
 
-    <!-- Hint overlay -->
     <TextView
         android:id="@+id/tv_hint"
         android:layout_width="0dp"

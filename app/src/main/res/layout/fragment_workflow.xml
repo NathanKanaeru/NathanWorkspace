@@ -21,29 +21,28 @@
                 android:id="@+id/card_header"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
+                app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:contentPadding="20dp"
+                app:contentPadding="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/blue_primary"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <!-- Left: workflow info -->
                     <LinearLayout
                         android:id="@+id/layout_repo_info"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/layout_user_info">
+                        app:layout_constraintEnd_toStartOf="@id/layout_user_info"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
                             android:id="@+id/tv_workflow_name"
@@ -51,8 +50,7 @@
                             android:layout_height="wrap_content"
                             android:text="student.yml"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="?attr/colorOnSurface"
-                            android:textStyle="bold" />
+                            android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:id="@+id/tv_repo_path"
@@ -64,16 +62,15 @@
                             android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
 
-                    <!-- Right: user info (avatar + name + login) -->
                     <LinearLayout
                         android:id="@+id/layout_user_info"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent">
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -87,8 +84,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="User"
                                 android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-                                android:textColor="?attr/colorOnSurface"
-                                android:textStyle="bold" />
+                                android:textColor="?attr/colorOnSurface" />
 
                             <TextView
                                 android:id="@+id/tv_user_login"
@@ -109,7 +105,6 @@
                             app:tint="?attr/colorPrimary" />
                     </LinearLayout>
 
-                    <!-- Running state info (replaces repo/user info when active) -->
                     <LinearLayout
                         android:id="@+id/layout_run_info"
                         android:layout_width="0dp"
@@ -117,10 +112,10 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent">
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -134,8 +129,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Run #0"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                                android:textColor="?attr/colorOnSurface"
-                                android:textStyle="bold" />
+                                android:textColor="?attr/colorOnSurface" />
 
                             <TextView
                                 android:id="@+id/tv_elapsed"
@@ -144,8 +138,7 @@
                                 android:layout_marginTop="2dp"
                                 android:text="00:00"
                                 android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-                                android:textColor="@color/teal_accent"
-                                android:textStyle="bold" />
+                                android:textColor="?attr/colorPrimary" />
                         </LinearLayout>
 
                         <TextView
@@ -157,7 +150,7 @@
                             android:text="QUEUED"
                             android:textAlignment="center"
                             android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="@color/white"
+                            android:textColor="@color/onPrimary"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -172,18 +165,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:visibility="visible"
-                app:cardCornerRadius="16dp"
+                app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/card_header"
-                app:strokeColor="?attr/colorOutline"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="24dp">
+                    android:padding="16dp">
 
                     <TextView
                         android:id="@+id/tv_workflow_title"
@@ -192,7 +185,6 @@
                         android:text="Start New Workflow"
                         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                         android:textColor="?attr/colorOnSurface"
-                        android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -211,7 +203,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_code"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
@@ -233,14 +225,13 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_start"
                         android:layout_width="0dp"
-                        android:layout_height="56dp"
+                        android:layout_height="48dp"
                         android:layout_marginTop="20dp"
                         android:text="Start Workflow"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                        app:backgroundTint="@color/blue_primary"
-                        app:cornerRadius="16dp"
+                        app:cornerRadius="9999dp"
                         app:icon="@drawable/ic_play"
-                        app:iconTint="@color/white"
+                        app:iconTint="?attr/colorOnPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/til_code" />
@@ -256,20 +247,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:visibility="gone"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/card_header"
-                app:strokeColor="@color/teal_accent"
+                app:strokeColor="?attr/colorPrimary"
                 app:strokeWidth="1dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="20dp">
+                    android:padding="16dp">
 
-                    <!-- Run header -->
                     <TextView
                         android:id="@+id/tv_active_run_id"
                         android:layout_width="0dp"
@@ -277,7 +267,6 @@
                         android:text="Run #0"
                         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                         android:textColor="?attr/colorOnSurface"
-                        android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@id/chip_active_status"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -291,12 +280,11 @@
                         android:text="QUEUED"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                        android:textColor="@color/white"
+                        android:textColor="@color/onPrimary"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <!-- Elapsed time -->
                     <TextView
                         android:id="@+id/tv_active_elapsed"
                         android:layout_width="0dp"
@@ -304,13 +292,11 @@
                         android:layout_marginTop="4dp"
                         android:text="00:00"
                         android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-                        android:textColor="@color/teal_accent"
-                        android:textStyle="bold"
+                        android:textColor="?attr/colorPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_active_run_id" />
 
-                    <!-- Progress bar -->
                     <ProgressBar
                         android:id="@+id/progress_active"
                         style="?android:attr/progressBarStyleHorizontal"
@@ -318,12 +304,11 @@
                         android:layout_height="4dp"
                         android:layout_marginTop="12dp"
                         android:indeterminate="true"
-                        android:indeterminateTint="@color/teal_accent"
+                        android:indeterminateTint="?attr/colorPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_active_elapsed" />
 
-                    <!-- Log terminal -->
                     <ScrollView
                         android:id="@+id/scroll_logs"
                         android:layout_width="0dp"
@@ -342,12 +327,10 @@
                             android:fontFamily="monospace"
                             android:lineSpacingExtra="4dp"
                             android:text="Waiting for runner..."
-                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                            android:textColor="@color/logs_text" />
+                            android:textColor="#e1e2e9" />
 
                     </ScrollView>
 
-                    <!-- Copy button -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_copy_logs"
                         style="@style/Widget.Material3.Button.TextButton"
@@ -361,7 +344,6 @@
                         app:layout_constraintEnd_toEndOf="@id/scroll_logs"
                         app:layout_constraintTop_toTopOf="@id/scroll_logs" />
 
-                    <!-- Action row -->
                     <LinearLayout
                         android:id="@+id/layout_active_actions"
                         android:layout_width="0dp"
@@ -381,7 +363,7 @@
                             android:layout_weight="1"
                             android:text="Cancel"
                             android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                            app:cornerRadius="12dp"
+                            app:cornerRadius="9999dp"
                             app:icon="@drawable/ic_stop"
                             app:iconTint="?attr/colorError"
                             app:strokeColor="?attr/colorError" />
@@ -431,8 +413,7 @@
                     android:layout_weight="1"
                     android:text="Workflow History"
                     android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
                     android:id="@+id/tv_history_count"
@@ -442,8 +423,7 @@
                     android:paddingHorizontal="8dp"
                     android:text="0"
                     android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                    android:textColor="@color/blue_primary"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorPrimary" />
             </LinearLayout>
 
             <LinearLayout
@@ -480,8 +460,8 @@
                 android:layout_marginTop="8dp"
                 android:paddingHorizontal="16dp"
                 android:text="Clear History"
-                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:visibility="gone"
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_delete"
