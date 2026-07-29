@@ -220,6 +220,44 @@ object GitHubApi {
         } catch (e: Exception) { Result.failure(e) }
     }
 
+    suspend fun getReleases(token: String, perPage: Int = 10): Result<List<ReleaseInfo>> = withContext(Dispatchers.IO) {
+        try {
+            val url = "$API_BASE/repos/NathanKanaeru/samptest/releases?per_page=$perPage"
+            val response = authRequest(url, token).build().let { client.newCall(it).execute() }
+            val body = response.body?.string()
+            if (!response.isSuccessful || body.isNullOrBlank())
+                return@withContext Result.failure(Exception("Gagal ambil releases (${response.code})"))
+
+            val parsed = JsonParser.parseString(body)
+            if (!parsed.isJsonArray) return@withContext Result.failure(Exception("Respon bukan array: ${body.take(200)}"))
+            val arr = parsed.asJsonArray
+            val releases = arr.map { it.asJsonObject }.map { obj ->
+                val assetsArr = obj.getAsJsonArray("assets")
+                val assets = assetsArr?.map { it.asJsonObject }?.map { asset ->
+                    AssetInfo(
+                        id = asset.get("id").asLong,
+                        name = asset.get("name").safeString(),
+                        size = asset.get("size").asLong,
+                        downloadCount = asset.get("download_count").asInt,
+                        browserDownloadUrl = asset.get("browser_download_url").safeString(),
+                        contentType = asset.get("content_type").safeString()
+                    )
+                } ?: emptyList()
+
+                ReleaseInfo(
+                    id = obj.get("id").asLong,
+                    tagName = obj.get("tag_name").safeString(),
+                    name = obj.get("name").safeString(),
+                    body = obj.get("body").safeString(),
+                    publishedAt = obj.get("published_at").safeString(),
+                    htmlUrl = obj.get("html_url").safeString(),
+                    assets = assets
+                )
+            }
+            Result.success(releases)
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
     suspend fun listRuns(token: String, perPage: Int = 20): Result<List<WorkflowRunInfo>> = withContext(Dispatchers.IO) {
         try {
             val url = "$API_BASE/repos/$OWNER/$REPO/actions/workflows/$WORKFLOW/runs?per_page=$perPage"
@@ -258,4 +296,21 @@ data class StepInfo(
     val status: String,
     val conclusion: String?,
     val number: Int
+)
+data class ReleaseInfo(
+    val id: Long,
+    val tagName: String,
+    val name: String,
+    val body: String,
+    val publishedAt: String,
+    val htmlUrl: String,
+    val assets: List<AssetInfo>
+)
+data class AssetInfo(
+    val id: Long,
+    val name: String,
+    val size: Long,
+    val downloadCount: Int,
+    val browserDownloadUrl: String,
+    val contentType: String
 )

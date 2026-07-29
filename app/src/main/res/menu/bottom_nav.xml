@@ -5,6 +5,10 @@
         android:icon="@drawable/ic_play"
         android:title="Run" />
     <item
+        android:id="@+id/repoFragment"
+        android:icon="@drawable/ic_releases"
+        android:title="Releases" />
+    <item
         android:id="@+id/webviewFragment"
         android:icon="@drawable/ic_web"
         android:title="Remote" />

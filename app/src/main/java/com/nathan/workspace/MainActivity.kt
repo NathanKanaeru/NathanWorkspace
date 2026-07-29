@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(this)
         binding.viewpager.adapter = adapter
         binding.viewpager.isUserInputEnabled = false
-        binding.viewpager.offscreenPageLimit = 2
+        binding.viewpager.offscreenPageLimit = 3
 
         binding.viewpager.setPageTransformer { page, position ->
             val absPos = kotlin.math.abs(position)
