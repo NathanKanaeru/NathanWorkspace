@@ -1,6 +1,8 @@
 package com.nathan.workspace.ui
 
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +11,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.nathan.workspace.databinding.FragmentWebviewBinding
@@ -44,6 +47,7 @@ class WebViewFragment : Fragment() {
                     if (_binding != null) {
                         binding.progressBar.isVisible = true
                         binding.tvUrl.text = url?.let { extractDomain(it) } ?: "Loading..."
+                        updateSecurityIcon(url)
                     }
                 }
 
@@ -88,13 +92,32 @@ class WebViewFragment : Fragment() {
             binding.webview.reload()
         }
 
+        binding.btnHome.setOnClickListener {
+            binding.webview.loadUrl("https://remotedesktop.google.com/access")
+        }
+
+        binding.btnExternal.setOnClickListener {
+            val url = binding.webview.url
+            if (!url.isNullOrBlank()) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                ContextCompat.startActivity(requireContext(), intent, null)
+            }
+        }
+
         updateNavButtons()
     }
 
-    private fun updateNavButtons() {
+    private fun updateSecurityIcon(url: String?) {
         if (_binding == null) return
-        binding.btnBack.isEnabled = binding.webview.canGoBack()
-        binding.btnForward.isEnabled = binding.webview.canGoForward()
+        if (url != null && url.startsWith("https://")) {
+            binding.tvUrlIcon.text = "🔒"
+            binding.tvUrlIcon.visibility = View.VISIBLE
+        } else if (url != null && url.startsWith("http://")) {
+            binding.tvUrlIcon.text = "⚠️"
+            binding.tvUrlIcon.visibility = View.VISIBLE
+        } else {
+            binding.tvUrlIcon.visibility = View.GONE
+        }
     }
 
     private fun extractDomain(url: String): String {
@@ -104,6 +127,16 @@ class WebViewFragment : Fragment() {
         } catch (_: Exception) {
             url
         }
+    }
+
+    private fun updateNavButtons() {
+        if (_binding == null) return
+        binding.btnBack.isEnabled = binding.webview.canGoBack()
+        binding.btnForward.isEnabled = binding.webview.canGoForward()
+        val backAlpha = if (binding.btnBack.isEnabled) 1.0f else 0.38f
+        val fwdAlpha = if (binding.btnForward.isEnabled) 1.0f else 0.38f
+        binding.btnBack.alpha = backAlpha
+        binding.btnForward.alpha = fwdAlpha
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

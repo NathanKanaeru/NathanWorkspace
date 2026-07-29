@@ -1,0 +1,239 @@
+---
+version: alpha
+name: NathanWorkspace
+description: Clean, modern, and simple but elegant
+colors:
+  primary: "#a6c8ff"
+  surfaceTint: "#a6c8ff"
+  onPrimary: "#02315e"
+  primaryContainer: "#234776"
+  onPrimaryContainer: "#d5e3ff"
+  secondary: "#bdc7dc"
+  onSecondary: "#273141"
+  secondaryContainer: "#3d4758"
+  onSecondaryContainer: "#d9e3f8"
+  tertiary: "#dabde2"
+  onTertiary: "#3d2846"
+  tertiaryContainer: "#553f5d"
+  onTertiaryContainer: "#f7d8ff"
+  error: "#ffb4ab"
+  onError: "#690005"
+  errorContainer: "#93000a"
+  onErrorContainer: "#ffdad6"
+  background: "#111318"
+  onBackground: "#e1e2e9"
+  surface: "#111318"
+  onSurface: "#e1e2e9"
+  surfaceVariant: "#43474e"
+  onSurfaceVariant: "#c4c6cf"
+  outline: "#8d9199"
+  outlineVariant: "#43474e"
+  shadow: "#000000"
+  scrim: "#000000"
+  inverseSurface: "#e1e2e9"
+  inverseOnSurface: "#2e3035"
+  inversePrimary: "#3d5f90"
+  primaryFixed: "#d5e3ff"
+  onPrimaryFixed: "#001c3b"
+  primaryFixedDim: "#a6c8ff"
+  onPrimaryFixedVariant: "#234776"
+  secondaryFixed: "#d9e3f8"
+  onSecondaryFixed: "#121c2b"
+  secondaryFixedDim: "#bdc7dc"
+  onSecondaryFixedVariant: "#3d4758"
+  tertiaryFixed: "#f7d8ff"
+  onTertiaryFixed: "#27142f"
+  tertiaryFixedDim: "#dabde2"
+  onTertiaryFixedVariant: "#553f5d"
+  surfaceDim: "#111318"
+  surfaceBright: "#37393e"
+  surfaceContainerLowest: "#0c0e13"
+  surfaceContainerLow: "#191c20"
+  surfaceContainer: "#1d2024"
+  surfaceContainerHigh: "#282a2f"
+  surfaceContainerHighest: "#32353a"
+typography:
+  display-large:
+    fontFamily: Inter
+    fontSize: 57px
+    fontWeight: 400
+    lineHeight: 1.1
+  display-medium:
+    fontFamily: Inter
+    fontSize: 48px
+    fontWeight: 400
+    lineHeight: 1.1
+  display-small:
+    fontFamily: Inter
+    fontSize: 40px
+    fontWeight: 400
+    lineHeight: 1.1
+  headline-large:
+    fontFamily: Inter
+    fontSize: 33px
+    fontWeight: 400
+    lineHeight: 1.2
+  headline-medium:
+    fontFamily: Inter
+    fontSize: 28px
+    fontWeight: 400
+    lineHeight: 1.2
+  headline-small:
+    fontFamily: Inter
+    fontSize: 23px
+    fontWeight: 400
+    lineHeight: 1.2
+  title-large:
+    fontFamily: Inter
+    fontSize: 19px
+    fontWeight: 500
+    lineHeight: 1.2
+  title-medium:
+    fontFamily: Inter
+    fontSize: 16px
+    fontWeight: 500
+    lineHeight: 1.2
+  title-small:
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: 500
+    lineHeight: 1.2
+  body-large:
+    fontFamily: Inter
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.5
+  body-medium:
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: 400
+    lineHeight: 1.5
+  body-small:
+    fontFamily: Inter
+    fontSize: 11px
+    fontWeight: 400
+    lineHeight: 1.5
+  label-large:
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: 500
+    lineHeight: 1.4
+  label-medium:
+    fontFamily: Inter
+    fontSize: 11px
+    fontWeight: 500
+    lineHeight: 1.4
+  label-small:
+    fontFamily: Inter
+    fontSize: 9px
+    fontWeight: 500
+    lineHeight: 1.4
+rounded:
+  xs: 4px
+  sm: 8px
+  md: 12px
+  lg: 16px
+  xl: 24px
+  full: 9999px
+spacing:
+  xs: 4px
+  sm: 8px
+  md: 16px
+  lg: 24px
+  xl: 48px
+components:
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.onPrimary}"
+    typography: "{typography.label-large}"
+    rounded: "{rounded.full}"
+    padding: "{spacing.md}"
+    height: "40px"
+  button-primary-hover:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.onPrimary}"
+    stateLayer: "{colors.onPrimary}"
+    stateLayerOpacity: "8%"
+  button-primary-pressed:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.onPrimary}"
+    stateLayer: "{colors.onPrimary}"
+    stateLayerOpacity: "10%"
+  button-primary-disabled:
+    backgroundColor: "{colors.onSurface}"
+    backgroundOpacity: "12%"
+    textColor: "{colors.onSurface}"
+    textOpacity: "38%"
+  button-secondary:
+    backgroundColor: "{colors.secondaryContainer}"
+    textColor: "{colors.onSecondaryContainer}"
+    typography: "{typography.label-large}"
+    rounded: "{rounded.full}"
+    padding: "{spacing.md}"
+    height: "40px"
+  button-secondary-hover:
+    backgroundColor: "{colors.secondaryContainer}"
+    textColor: "{colors.onSecondaryContainer}"
+    stateLayer: "{colors.onSecondaryContainer}"
+    stateLayerOpacity: "8%"
+  button-text:
+    backgroundColor: "transparent"
+    textColor: "{colors.primary}"
+    typography: "{typography.label-large}"
+    rounded: "{rounded.full}"
+    padding: "{spacing.sm}"
+    height: "40px"
+  button-text-hover:
+    backgroundColor: "transparent"
+    textColor: "{colors.primary}"
+    stateLayer: "{colors.primary}"
+    stateLayerOpacity: "8%"
+  input-field:
+    backgroundColor: "{colors.surfaceContainerHighest}"
+    textColor: "{colors.onSurface}"
+    typography: "{typography.body-large}"
+    rounded: "{rounded.xs}"
+    padding: "{spacing.md}"
+    height: "56px"
+    outlineColor: "{colors.outline}"
+    outlineWidth: "1px"
+  input-field-focused:
+    backgroundColor: "{colors.surfaceContainerHighest}"
+    textColor: "{colors.onSurface}"
+    outlineColor: "{colors.primary}"
+    outlineWidth: "2px"
+  input-field-error:
+    backgroundColor: "{colors.surfaceContainerHighest}"
+    textColor: "{colors.error}"
+    outlineColor: "{colors.error}"
+    outlineWidth: "2px"
+  input-field-disabled:
+    backgroundColor: "{colors.onSurface}"
+    backgroundOpacity: "4%"
+    textColor: "{colors.onSurface}"
+    textOpacity: "38%"
+    outlineColor: "{colors.onSurface}"
+    outlineOpacity: "12%"
+    outlineWidth: "1px"
+  card:
+    backgroundColor: "{colors.surfaceContainerLow}"
+    textColor: "{colors.onSurface}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.md}"
+  chip:
+    backgroundColor: "{colors.surfaceContainerLow}"
+    textColor: "{colors.onSurfaceVariant}"
+    typography: "{typography.label-large}"
+    rounded: "{rounded.sm}"
+    padding: "{spacing.sm}"
+    height: "32px"
+  chip-selected:
+    backgroundColor: "{colors.secondaryContainer}"
+    textColor: "{colors.onSecondaryContainer}"
+  tooltip:
+    backgroundColor: "{colors.inverseSurface}"
+    textColor: "{colors.inverseOnSurface}"
+    typography: "{typography.body-small}"
+    rounded: "{rounded.xs}"
+    padding: "{spacing.sm}"
+---

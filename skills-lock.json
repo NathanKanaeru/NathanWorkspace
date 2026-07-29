@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "material-design-md": {
+      "source": "darlanrod/material-design-md",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "57dae0157213cde40eddd26df8339fb4b2a5a1aa53496f075a66cf6e3b45eb75"
+    }
+  }
+}

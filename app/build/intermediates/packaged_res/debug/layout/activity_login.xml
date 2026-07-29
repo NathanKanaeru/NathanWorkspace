@@ -21,7 +21,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/colorOnSurface" />
+            app:tint="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/tv_title"
@@ -32,7 +32,6 @@
             android:text="Nathan Workspace"
             android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
             android:textColor="?attr/colorOnSurface"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_logo" />
@@ -55,13 +54,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:contentPadding="24dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:contentPadding="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
-            app:strokeColor="?attr/colorOutline"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -70,7 +69,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_token"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:hint="GitHub Personal Access Token"
@@ -110,11 +109,11 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_signin"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="48dp"
             android:layout_marginTop="24dp"
             android:text="Sign In"
             android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-            app:cornerRadius="16dp"
+            app:cornerRadius="9999dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_login" />
