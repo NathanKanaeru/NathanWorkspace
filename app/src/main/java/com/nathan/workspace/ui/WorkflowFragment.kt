@@ -24,7 +24,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.nathan.workspace.R
 import com.nathan.workspace.api.JobInfo
-import com.nathan.workspace.api.StepInfo
 import com.nathan.workspace.databinding.FragmentWorkflowBinding
 import com.nathan.workspace.databinding.ItemHistoryBinding
 import com.nathan.workspace.databinding.ItemStepBinding
@@ -74,16 +73,27 @@ class WorkflowFragment : Fragment() {
             showToast("Refreshing...")
         }
 
+        binding.btnDismiss.setOnClickListener {
+            viewModel.dismissCompleted()
+        }
+
         binding.btnViewGithub.setOnClickListener {
             val state = viewModel.uiState.value
-            if (state is WorkflowUiState.Running) {
-                openInBrowser(state.htmlUrl)
+            val url = when (state) {
+                is WorkflowUiState.Running -> state.htmlUrl
+                is WorkflowUiState.Completed -> state.entry.run.htmlUrl
+                else -> ""
             }
+            openInBrowser(url)
         }
 
         binding.btnCopyLogs.setOnClickListener {
             val state = viewModel.uiState.value
-            val logs = if (state is WorkflowUiState.Running) state.logs else ""
+            val logs = when (state) {
+                is WorkflowUiState.Running -> state.logs
+                is WorkflowUiState.Completed -> state.entry.logs
+                else -> ""
+            }
             copyToClipboard(logs)
         }
 
@@ -144,7 +154,7 @@ class WorkflowFragment : Fragment() {
         binding.layoutHistoryHeader.isVisible = hasHistory
         binding.layoutHistory.isVisible = hasHistory
         binding.btnClearHistory.isVisible = hasHistory
-        binding.tvEmpty.isVisible = !hasHistory && viewModel.activeRun.value == null
+        binding.tvEmpty.isVisible = !hasHistory
     }
 
     private fun renderStarting(@Suppress("UNUSED_PARAMETER") state: WorkflowUiState.Starting) {
@@ -165,6 +175,12 @@ class WorkflowFragment : Fragment() {
         binding.layoutSteps.isVisible = false
         binding.tvLogs.text = "Triggering workflow..."
         binding.btnCopyLogs.isVisible = false
+        binding.progressActive.isVisible = true
+
+        binding.btnCancel.isVisible = false
+        binding.btnRefreshActive.isVisible = false
+        binding.btnDismiss.isVisible = false
+        binding.btnViewGithub.isVisible = false
     }
 
     private fun renderRunning(state: WorkflowUiState.Running) {
@@ -196,12 +212,18 @@ class WorkflowFragment : Fragment() {
             state.logs
         }
         binding.btnCopyLogs.isVisible = state.logs.isNotBlank()
+        binding.progressActive.isVisible = true
 
         renderSteps(state.jobs)
 
         binding.scrollLogs.post { binding.scrollLogs.fullScroll(View.FOCUS_DOWN) }
 
         binding.tvEmpty.isVisible = false
+
+        binding.btnCancel.isVisible = true
+        binding.btnRefreshActive.isVisible = true
+        binding.btnDismiss.isVisible = false
+        binding.btnViewGithub.isVisible = true
 
         animateStatusChip(binding.chipStatus)
     }
@@ -276,6 +298,10 @@ class WorkflowFragment : Fragment() {
     private fun renderCompleted(state: WorkflowUiState.Completed) {
         if (_binding == null) return
 
+        binding.cardActive.isVisible = true
+        binding.cardInput.isVisible = false
+        binding.progressActive.isVisible = false
+
         val entry = state.entry
         val isSuccess = entry.run.conclusion == "success"
         val isCancelled = entry.run.conclusion == "cancelled" || entry.run.conclusion == "canceled"
@@ -295,6 +321,7 @@ class WorkflowFragment : Fragment() {
             }
         )
 
+        binding.tvActiveRunId.text = "Run #${entry.run.id}"
         binding.chipActiveStatus.text = when {
             isSuccess -> "SUCCESS"
             isCancelled -> "CANCELLED"
@@ -307,25 +334,20 @@ class WorkflowFragment : Fragment() {
                 else -> R.drawable.bg_chip_failure
             }
         )
-        binding.progressActive.isVisible = false
 
         binding.tvLogs.text = entry.logs.ifBlank { "No logs available" }
         binding.btnCopyLogs.isVisible = entry.logs.isNotBlank()
         binding.layoutSteps.isVisible = false
 
-        binding.cardActive.postDelayed({
-            if (_binding != null) {
-                renderIdle()
-            }
-        }, 3000)
+        binding.btnCancel.isVisible = false
+        binding.btnRefreshActive.isVisible = false
+        binding.btnDismiss.isVisible = true
+        binding.btnViewGithub.isVisible = true
     }
 
     private fun renderError(state: WorkflowUiState.Error) {
         if (_binding == null) return
         showToast(state.message)
-        if (viewModel.activeRun.value == null) {
-            renderIdle()
-        }
     }
 
     private fun animateCardTransition(hide: View, show: View) {
@@ -376,7 +398,7 @@ class WorkflowFragment : Fragment() {
             binding.layoutHistory.isVisible = false
             binding.layoutHistoryHeader.isVisible = false
             binding.btnClearHistory.isVisible = false
-            if (viewModel.activeRun.value == null) {
+            if (viewModel.uiState.value is WorkflowUiState.Idle) {
                 binding.tvEmpty.isVisible = true
             }
             return
@@ -433,7 +455,8 @@ class WorkflowFragment : Fragment() {
                 }
             )
 
-            itemBinding.tvTime.text = entry.endedAt
+            val displayTime = formatTime(entry.endedAt)
+            itemBinding.tvTime.text = displayTime
 
             if (entry.logs.isNotBlank()) {
                 val preview = entry.logs.take(200).replace("\n", " ").trim()
@@ -470,6 +493,18 @@ class WorkflowFragment : Fragment() {
                     .setStartDelay((index * 30).toLong())
                     .start()
             }
+        }
+    }
+
+    private fun formatTime(isoDate: String): String {
+        return try {
+            val fmt = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.US)
+            fmt.timeZone = java.util.TimeZone.getTimeZone("UTC")
+            val date = fmt.parse(isoDate) ?: return isoDate.take(10)
+            val outFmt = java.text.SimpleDateFormat("dd MMM yyyy HH:mm", java.util.Locale.US)
+            outFmt.format(date)
+        } catch (_: Exception) {
+            isoDate.take(10)
         }
     }
 

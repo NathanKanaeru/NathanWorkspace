@@ -3354,6 +3354,7 @@ id btn_clear_all
 id btn_clear_history
 id btn_copy_logs
 id btn_delete
+id btn_dismiss
 id btn_external
 id btn_forward
 id btn_github_repo

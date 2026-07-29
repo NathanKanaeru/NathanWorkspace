@@ -94,6 +94,14 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
                     htmlUrl = active.run.htmlUrl,
                     jobs = active.jobs
                 )
+            } else {
+                val entry = LogEntry(
+                    run = active.run,
+                    logs = active.logs,
+                    endedAt = active.run.updatedAt,
+                    code = active.code
+                )
+                _uiState.value = WorkflowUiState.Completed(entry)
             }
         } catch (_: Exception) {
             prefs.edit().remove("active_run").apply()
@@ -126,7 +134,16 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
         prefs.edit().putString("history", gson.toJson(_history.value)).apply()
     }
 
+    fun dismissCompleted() {
+        _uiState.value = WorkflowUiState.Idle
+        clearActiveRun()
+    }
+
     fun startRun(code: String, token: String) {
+        // If there's a completed run, clear it first
+        if (_uiState.value is WorkflowUiState.Completed) {
+            clearActiveRun()
+        }
         _uiState.value = WorkflowUiState.Starting(code)
         scope.launch {
             val result = GitHubApi.triggerWorkflow(token, code)
@@ -206,10 +223,9 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
                             pollingJob?.cancel()
                             elapsedJob?.cancel()
                             _isPolling.value = false
-                            clearActiveRun()
+                            _activeRun.value = _activeRun.value?.copy(isRunning = false)
+                            saveActiveRun()
                             _uiState.value = WorkflowUiState.Completed(entry)
-                            delay(3000)
-                            _uiState.value = WorkflowUiState.Idle
                             return@launch
                         } else {
                             _uiState.value = WorkflowUiState.Running(
@@ -336,17 +352,14 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
                     )
                     _history.value = listOf(entry) + _history.value
                     saveHistory()
+                    _activeRun.value = _activeRun.value?.copy(isRunning = false)
+                    saveActiveRun()
                     _uiState.value = WorkflowUiState.Completed(entry)
-                    delay(3000)
-                    _uiState.value = WorkflowUiState.Idle
                 },
                 onFailure = {
                     _uiState.value = WorkflowUiState.Error("Gagal cancel workflow")
-                    delay(2000)
-                    _uiState.value = WorkflowUiState.Idle
                 }
             )
-            clearActiveRun()
         }
     }
 
