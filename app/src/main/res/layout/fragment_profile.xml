@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:padding="24dp">
 
+        <!-- ===== PROFILE CARD ===== -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_profile"
             android:layout_width="0dp"
@@ -30,8 +31,8 @@
 
                 <ImageView
                     android:id="@+id/iv_avatar"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
                     android:contentDescription="Avatar"
                     android:src="@drawable/ic_github_mark"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -43,7 +44,7 @@
                     android:id="@+id/tv_user_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="12dp"
                     android:gravity="center"
                     android:text="User"
                     android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
@@ -57,17 +58,34 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/loading"
+                    android:text="Loading..."
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_user_name" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_open_github"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/open_github"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_github_mark"
+                    app:iconSize="14dp"
+                    app:iconTint="?attr/colorPrimary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_user_login" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- ===== STATS CARD ===== -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_stats"
             android:layout_width="0dp"
@@ -97,6 +115,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <ImageView
+                    android:id="@+id/iv_stats_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="Stats"
+                    android:src="@drawable/ic_history"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_stats_title"
+                    app:tint="?attr/colorPrimary" />
+
                 <TextView
                     android:id="@+id/tv_total_runs_label"
                     android:layout_width="0dp"
@@ -105,7 +133,7 @@
                     android:text="Total Runs"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    app:layout_constraintEnd_toStartOf="@id/tv_total_runs"
+                    app:layout_constraintEnd_toStartOf="@id/guideline_stats"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_stats_title" />
 
@@ -127,7 +155,7 @@
                     android:text="Success Rate"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    app:layout_constraintEnd_toStartOf="@id/tv_success_rate"
+                    app:layout_constraintEnd_toStartOf="@id/guideline_stats"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_total_runs_label" />
 
@@ -142,31 +170,62 @@
                     app:layout_constraintTop_toTopOf="@id/tv_success_rate_label" />
 
                 <TextView
-                    android:id="@+id/tv_last_run_label"
+                    android:id="@+id/tv_failed_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Last Run"
+                    android:text="Failed"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    app:layout_constraintEnd_toStartOf="@id/tv_last_run"
+                    app:layout_constraintEnd_toStartOf="@id/guideline_stats"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_success_rate_label" />
 
                 <TextView
-                    android:id="@+id/tv_last_run"
+                    android:id="@+id/tv_failed"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                    android:textColor="?attr/colorError"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_failed_label" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_stats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.5" />
+
+                <TextView
+                    android:id="@+id/tv_last_run_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Last Run"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_failed_label" />
+
+                <TextView
+                    android:id="@+id/tv_last_run"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="No runs yet"
                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_last_run_label" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_last_run_label" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- ===== SETTINGS CARD ===== -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_settings"
             android:layout_width="0dp"
@@ -186,32 +245,191 @@
                 android:orientation="vertical"
                 android:padding="8dp">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_settings"
+                        app:tint="?attr/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="Settings"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="?attr/colorOnSurface" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?attr/colorOutlineVariant" />
+
+                <!-- Clear History -->
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_logout"
+                    android:id="@+id/btn_clear_history"
                     style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:text="Sign Out"
+                    android:gravity="start|center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:text="Clear Workflow History"
+                    android:textColor="?attr/colorOnSurface"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_history"
+                    app:iconGravity="textStart"
+                    app:iconSize="20dp"
+                    app:iconTint="?attr/colorOnSurfaceVariant" />
+
+                <!-- Clear All Data -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_clear_all"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:text="Clear All Data"
                     android:textColor="?attr/colorError"
                     app:cornerRadius="12dp"
-                    app:icon="@drawable/ic_logout"
+                    app:icon="@drawable/ic_delete"
+                    app:iconGravity="textStart"
+                    app:iconSize="20dp"
                     app:iconTint="?attr/colorError" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <TextView
+        <!-- ===== ABOUT CARD ===== -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_about"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:gravity="center"
-            android:text="Nathan Workspace v1.4"
-            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_settings" />
+            app:layout_constraintTop_toBottomOf="@id/card_settings"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_info"
+                        app:tint="?attr/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="About"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="?attr/colorOnSurface" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?attr/colorOutlineVariant" />
+
+                <!-- Version -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="App Version"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tv_version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2.0"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="?attr/colorOnSurface" />
+
+                </LinearLayout>
+
+                <!-- GitHub Repository -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_github_repo"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:text="GitHub Repository"
+                    android:textColor="?attr/colorOnSurface"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_github_mark"
+                    app:iconGravity="textStart"
+                    app:iconSize="20dp"
+                    app:iconTint="?attr/colorPrimary" />
+
+                <!-- Open Source Licenses -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_licenses"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:text="Open Source Licenses"
+                    android:textColor="?attr/colorOnSurface"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_info"
+                    app:iconGravity="textStart"
+                    app:iconSize="20dp"
+                    app:iconTint="?attr/colorOnSurfaceVariant" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ===== SIGN OUT BUTTON ===== -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_logout"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
+            android:text="Sign Out"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+            app:cornerRadius="9999dp"
+            app:icon="@drawable/ic_logout"
+            app:iconTint="?attr/colorOnError"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_about" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

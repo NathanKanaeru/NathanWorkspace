@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Nathan Workspace</string>
     <string name="loading">Loading...</string>
+    <string name="open_github">Open GitHub Profile</string>
 </resources>

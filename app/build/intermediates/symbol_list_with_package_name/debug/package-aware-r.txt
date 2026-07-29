@@ -3095,14 +3095,18 @@ drawable ic_call_answer_video_low
 drawable ic_call_decline
 drawable ic_call_decline_low
 drawable ic_check
+drawable ic_check_circle
 drawable ic_clear_black_24
 drawable ic_clock_black_24dp
 drawable ic_close
 drawable ic_code
+drawable ic_dark_mode
 drawable ic_delete
 drawable ic_eye
 drawable ic_github_mark
+drawable ic_history
 drawable ic_home
+drawable ic_info
 drawable ic_key
 drawable ic_keyboard_black_24dp
 drawable ic_launcher_background
@@ -3118,8 +3122,11 @@ drawable ic_mtrl_chip_close_circle
 drawable ic_open_in_browser
 drawable ic_person
 drawable ic_play
+drawable ic_polling
 drawable ic_refresh
 drawable ic_search_black_24
+drawable ic_settings
+drawable ic_splash_logo
 drawable ic_stop
 drawable ic_web
 drawable icon_background
@@ -3303,13 +3310,17 @@ id bounceEnd
 id bounceStart
 id btn_back
 id btn_cancel
+id btn_clear_all
 id btn_clear_history
 id btn_copy_logs
 id btn_delete
 id btn_external
 id btn_forward
+id btn_github_repo
 id btn_home
+id btn_licenses
 id btn_logout
+id btn_open_github
 id btn_refresh
 id btn_refresh_active
 id btn_rerun
@@ -3321,6 +3332,7 @@ id buttonPanel
 id cache_measures
 id callMeasure
 id cancel_button
+id card_about
 id card_active
 id card_header
 id card_input
@@ -3441,6 +3453,7 @@ id graph_wrap
 id group_divider
 id grouping
 id groups
+id guideline_stats
 id header_title
 id hide_ime_id
 id hideable
@@ -3465,6 +3478,7 @@ id item_touch_helper_previous_elevation
 id iv_avatar
 id iv_icon
 id iv_logo
+id iv_stats_icon
 id iv_step_icon
 id jumpToEnd
 id jumpToStart
@@ -3735,6 +3749,8 @@ id tv_active_run_id
 id tv_conclusion
 id tv_elapsed
 id tv_empty
+id tv_failed
+id tv_failed_label
 id tv_hint
 id tv_history_count
 id tv_history_header
@@ -3760,6 +3776,7 @@ id tv_url
 id tv_url_icon
 id tv_user_login
 id tv_user_name
+id tv_version
 id tv_workflow_desc
 id tv_workflow_name
 id tv_workflow_title
@@ -4152,6 +4169,7 @@ string mtrl_switch_track_decoration_path
 string mtrl_switch_track_path
 string mtrl_timepicker_cancel
 string mtrl_timepicker_confirm
+string open_github
 string password_toggle_content_description
 string path_password_eye
 string path_password_eye_mask_strike_through

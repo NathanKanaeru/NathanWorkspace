@@ -1,15 +1,15 @@
 [
     {
-        "merged": "com.nathan.workspace.app-mergeDebugResources-37:/layout/fragment_workflow.xml",
-        "source": "com.nathan.workspace.app-main-40:/layout/fragment_workflow.xml"
-    },
-    {
         "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-mergeDebugResources-37:\\layout\\fragment_profile.xml",
         "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-40:\\layout\\fragment_profile.xml"
     },
     {
         "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-mergeDebugResources-37:\\layout\\item_history.xml",
         "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-40:\\layout\\item_history.xml"
+    },
+    {
+        "merged": "com.nathan.workspace.app-mergeDebugResources-37:/layout/fragment_profile.xml",
+        "source": "com.nathan.workspace.app-main-40:/layout/fragment_profile.xml"
     },
     {
         "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-mergeDebugResources-37:\\layout\\fragment_workflow.xml",
@@ -24,8 +24,8 @@
         "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-40:\\layout\\activity_login.xml"
     },
     {
-        "merged": "com.nathan.workspace.app-mergeDebugResources-37:/layout/item_step.xml",
-        "source": "com.nathan.workspace.app-main-40:/layout/item_step.xml"
+        "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-mergeDebugResources-37:\\layout\\item_step.xml",
+        "source": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-main-40:\\layout\\item_step.xml"
     },
     {
         "merged": "C:\\Users\\runneradmin\\.gradle\\daemon\\8.5\\com.nathan.workspace.app-mergeDebugResources-37:\\layout\\fragment_webview.xml",
