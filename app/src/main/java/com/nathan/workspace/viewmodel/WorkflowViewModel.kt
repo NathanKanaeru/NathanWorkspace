@@ -402,31 +402,6 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun refreshHistory(token: String) {
-        scope.launch {
-            GitHubApi.listRuns(token, 5).fold(
-                onSuccess = { runs ->
-                    val currentIds = _history.value.map { it.run.id }.toSet()
-                    val newEntries = runs
-                        .filter { it.id !in currentIds }
-                        .map { run ->
-                            LogEntry(
-                                run = run,
-                                logs = "",
-                                endedAt = run.updatedAt,
-                                code = ""
-                            )
-                        }
-                    if (newEntries.isNotEmpty()) {
-                        _history.value = newEntries + _history.value
-                        saveHistory()
-                    }
-                },
-                onFailure = { }
-            )
-        }
-    }
-
     fun clearHistory() {
         _history.value = emptyList()
         prefs.edit().remove("history").apply()

@@ -9,26 +9,38 @@
         android:id="@+id/viewpager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <me.ibrahimsn.lib.SmoothBottomBar
-        android:id="@+id/bottom_bar"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        app:backgroundColor="?attr/colorSurface"
-        app:indicatorColor="?attr/colorPrimary"
-        app:iconTint="?attr/colorOnSurfaceVariant"
-        app:iconTintActive="?attr/colorPrimary"
-        app:textColor="?attr/colorOnSurfaceVariant"
-        app:menu="@menu/bottom_nav"
-        app:sideMargins="0dp"
-        app:itemPadding="0dp"
-        app:cornerRadius="0dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_bottom_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="12dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <me.ibrahimsn.lib.SmoothBottomBar
+            android:id="@+id/bottom_bar"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@android:color/transparent"
+            app:indicatorColor="?attr/colorPrimary"
+            app:iconTint="?attr/colorOnSurfaceVariant"
+            app:iconTintActive="?attr/colorPrimary"
+            app:textColor="?attr/colorOnSurfaceVariant"
+            app:textSize="11sp"
+            app:menu="@menu/bottom_nav"
+            app:sideMargins="0dp"
+            app:itemPadding="0dp"
+            app:cornerRadius="0dp" />
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

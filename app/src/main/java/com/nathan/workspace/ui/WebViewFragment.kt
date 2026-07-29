@@ -12,6 +12,8 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.nathan.workspace.databinding.FragmentWebviewBinding
@@ -73,6 +75,12 @@ class WebViewFragment : Fragment() {
             } else {
                 loadUrl("https://remotedesktop.google.com/access")
             }
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.cardToolbar) { v, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            v.setPadding(v.paddingLeft, statusBarHeight, v.paddingRight, v.paddingBottom)
+            insets
         }
 
         // Toolbar navigation
