@@ -23,8 +23,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.nathan.workspace.R
+import com.nathan.workspace.api.JobInfo
+import com.nathan.workspace.api.StepInfo
 import com.nathan.workspace.databinding.FragmentWorkflowBinding
 import com.nathan.workspace.databinding.ItemHistoryBinding
+import com.nathan.workspace.databinding.ItemStepBinding
 import com.nathan.workspace.viewmodel.LogEntry
 import com.nathan.workspace.viewmodel.WorkflowUiState
 import com.nathan.workspace.viewmodel.WorkflowViewModel
@@ -64,6 +67,11 @@ class WorkflowFragment : Fragment() {
 
         binding.btnCancel.setOnClickListener {
             viewModel.cancelRun(token)
+        }
+
+        binding.btnRefreshActive.setOnClickListener {
+            viewModel.refreshActiveRun()
+            showToast("Refreshing...")
         }
 
         binding.btnViewGithub.setOnClickListener {
@@ -154,6 +162,7 @@ class WorkflowFragment : Fragment() {
         binding.tvActiveRunId.text = "Starting..."
         binding.chipActiveStatus.text = "QUEUED"
         binding.chipActiveStatus.setBackgroundResource(R.drawable.bg_chip_queued)
+        binding.layoutSteps.isVisible = false
         binding.tvLogs.text = "Triggering workflow..."
         binding.btnCopyLogs.isVisible = false
     }
@@ -188,11 +197,80 @@ class WorkflowFragment : Fragment() {
         }
         binding.btnCopyLogs.isVisible = state.logs.isNotBlank()
 
+        renderSteps(state.jobs)
+
         binding.scrollLogs.post { binding.scrollLogs.fullScroll(View.FOCUS_DOWN) }
 
         binding.tvEmpty.isVisible = false
 
         animateStatusChip(binding.chipStatus)
+    }
+
+    private fun renderSteps(jobs: List<JobInfo>) {
+        if (_binding == null) return
+        val container = binding.layoutSteps
+        container.removeAllViews()
+
+        if (jobs.isEmpty()) {
+            container.isVisible = false
+            return
+        }
+
+        container.isVisible = true
+        for (job in jobs) {
+            if (job.steps.isEmpty()) continue
+
+            for (step in job.steps) {
+                val itemBinding = ItemStepBinding.inflate(
+                    LayoutInflater.from(context), container, true
+                )
+
+                val iconRes: Int
+                val iconColor: Int
+                val chipBg: Int
+                val chipText: String
+
+                when (step.status) {
+                    "completed" -> {
+                        if (step.conclusion == "success") {
+                            iconRes = R.drawable.ic_check
+                            iconColor = Color.rgb(82, 199, 122)
+                            chipBg = R.drawable.bg_chip_success
+                            chipText = "OK"
+                        } else {
+                            iconRes = R.drawable.ic_close
+                            iconColor = Color.rgb(255, 138, 128)
+                            chipBg = R.drawable.bg_chip_failure
+                            chipText = "FAIL"
+                        }
+                    }
+                    "in_progress" -> {
+                        iconRes = R.drawable.ic_play
+                        iconColor = Color.rgb(100, 181, 246)
+                        chipBg = R.drawable.bg_chip_running
+                        chipText = "RUN"
+                    }
+                    "queued" -> {
+                        iconRes = R.drawable.ic_code
+                        iconColor = Color.rgb(245, 197, 66)
+                        chipBg = R.drawable.bg_chip_queued
+                        chipText = "PENDING"
+                    }
+                    else -> {
+                        iconRes = R.drawable.ic_code
+                        iconColor = Color.rgb(150, 150, 150)
+                        chipBg = R.drawable.bg_chip_queued
+                        chipText = step.status.uppercase()
+                    }
+                }
+
+                itemBinding.ivStepIcon.setImageResource(iconRes)
+                itemBinding.ivStepIcon.setColorFilter(iconColor)
+                itemBinding.tvStepName.text = step.name
+                itemBinding.tvStepStatus.text = chipText
+                itemBinding.tvStepStatus.setBackgroundResource(chipBg)
+            }
+        }
     }
 
     private fun renderCompleted(state: WorkflowUiState.Completed) {
@@ -232,19 +310,19 @@ class WorkflowFragment : Fragment() {
         binding.progressActive.isVisible = false
 
         binding.tvLogs.text = entry.logs.ifBlank { "No logs available" }
+        binding.btnCopyLogs.isVisible = entry.logs.isNotBlank()
+        binding.layoutSteps.isVisible = false
 
         binding.cardActive.postDelayed({
             if (_binding != null) {
                 renderIdle()
             }
-        }, 2500)
+        }, 3000)
     }
 
     private fun renderError(state: WorkflowUiState.Error) {
         if (_binding == null) return
-
-        android.widget.Toast.makeText(requireContext(), state.message, android.widget.Toast.LENGTH_LONG).show()
-
+        showToast(state.message)
         if (viewModel.activeRun.value == null) {
             renderIdle()
         }
@@ -377,7 +455,7 @@ class WorkflowFragment : Fragment() {
             }
 
             itemBinding.btnDelete.setOnClickListener {
-                viewModel.deleteHistoryEntry(token, index)
+                showDeleteConfirmDialog(index, entry)
             }
 
             itemBinding.root.scaleX = 0.95f
@@ -395,6 +473,29 @@ class WorkflowFragment : Fragment() {
         }
     }
 
+    private fun showDeleteConfirmDialog(index: Int, entry: LogEntry) {
+        val options = arrayOf(
+            "Delete from history only",
+            "Delete from GitHub too (run + logs)"
+        )
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Run #${entry.run.id}")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> {
+                        viewModel.deleteHistoryEntry(token, index)
+                        showToast("Run removed from history")
+                    }
+                    1 -> {
+                        viewModel.deleteHistoryEntryAndRun(token, index)
+                        showToast("Run deleted from GitHub and history")
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
     private fun openInBrowser(url: String) {
         if (url.isBlank()) return
         try {
@@ -407,7 +508,11 @@ class WorkflowFragment : Fragment() {
         val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Workflow Logs", text)
         clipboard.setPrimaryClip(clip)
-        android.widget.Toast.makeText(requireContext(), "Logs copied to clipboard", android.widget.Toast.LENGTH_SHORT).show()
+        showToast("Logs copied to clipboard")
+    }
+
+    private fun showToast(message: String) {
+        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
     }
 
     private fun showLogsDialog(entry: LogEntry) {

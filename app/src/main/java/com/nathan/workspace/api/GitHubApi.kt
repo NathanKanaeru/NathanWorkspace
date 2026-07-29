@@ -165,6 +165,61 @@ object GitHubApi {
         } catch (e: Exception) { Result.failure(e) }
     }
 
+    suspend fun getRunJobs(token: String, runId: Long): Result<List<JobInfo>> = withContext(Dispatchers.IO) {
+        try {
+            val url = "$API_BASE/repos/$OWNER/$REPO/actions/runs/$runId/jobs"
+            val response = authRequest(url, token).build().let { client.newCall(it).execute() }
+            val body = response.body?.string()
+            if (!response.isSuccessful || body.isNullOrBlank())
+                return@withContext Result.failure(Exception("Gagal ambil jobs (${response.code})"))
+
+            val json = parseJson(body).getOrElse { return@withContext Result.failure(it) }
+            val arr = json.getAsJsonArray("jobs") ?: return@withContext Result.failure(Exception("Tidak ada field jobs"))
+            val jobs = arr.map { it.asJsonObject }.map { obj ->
+                val stepsArr = obj.getAsJsonArray("steps")
+                val steps = stepsArr?.map { it.asJsonObject }?.map { step ->
+                    StepInfo(
+                        name = step.get("name").safeString(),
+                        status = step.get("status").safeString(),
+                        conclusion = step.get("conclusion").safeString().ifBlank { null },
+                        number = step.get("number").asInt
+                    )
+                } ?: emptyList()
+
+                JobInfo(
+                    id = obj.get("id").asLong,
+                    name = obj.get("name").safeString(),
+                    status = obj.get("status").safeString(),
+                    conclusion = obj.get("conclusion").safeString().ifBlank { null },
+                    startedAt = obj.get("started_at").safeString(),
+                    completedAt = obj.get("completed_at").safeString(),
+                    steps = steps
+                )
+            }
+            Result.success(jobs)
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun getJobLogs(token: String, jobId: Long): Result<String> = withContext(Dispatchers.IO) {
+        try {
+            val response = authRequest("$API_BASE/repos/$OWNER/$REPO/actions/jobs/$jobId/logs", token)
+                .build().let { client.newCall(it).execute() }
+            val body = response.body?.string()
+            if (!response.isSuccessful || body == null)
+                return@withContext Result.failure(Exception("Gagal ambil job logs (${response.code})"))
+            Result.success(body)
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun deleteRun(token: String, runId: Long): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val response = authRequest("$API_BASE/repos/$OWNER/$REPO/actions/runs/$runId", token)
+                .delete().build().let { client.newCall(it).execute() }
+            if (response.isSuccessful || response.code == 204) Result.success(Unit)
+            else Result.failure(Exception("Gagal hapus run (${response.code})"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
     suspend fun listRuns(token: String, perPage: Int = 20): Result<List<WorkflowRunInfo>> = withContext(Dispatchers.IO) {
         try {
             val url = "$API_BASE/repos/$OWNER/$REPO/actions/workflows/$WORKFLOW/runs?per_page=$perPage"
@@ -188,4 +243,19 @@ data class WorkflowRunInfo(
     val createdAt: String,
     val updatedAt: String,
     val htmlUrl: String
+)
+data class JobInfo(
+    val id: Long,
+    val name: String,
+    val status: String,
+    val conclusion: String?,
+    val startedAt: String,
+    val completedAt: String,
+    val steps: List<StepInfo>
+)
+data class StepInfo(
+    val name: String,
+    val status: String,
+    val conclusion: String?,
+    val number: Int
 )

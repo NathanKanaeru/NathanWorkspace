@@ -105,6 +105,7 @@ id btn_forward
 id btn_home
 id btn_logout
 id btn_refresh
+id btn_refresh_active
 id btn_rerun
 id btn_signin
 id btn_start
@@ -127,11 +128,13 @@ id gl_bottom
 id iv_avatar
 id iv_icon
 id iv_logo
+id iv_step_icon
 id layout_active_actions
 id layout_history
 id layout_history_header
 id layout_repo_info
 id layout_run_info
+id layout_steps
 id layout_user_info
 id profileFragment
 id progress_active
@@ -157,6 +160,8 @@ id tv_logs
 id tv_repo_path
 id tv_run_title
 id tv_stats_title
+id tv_step_name
+id tv_step_status
 id tv_subtitle
 id tv_success_rate
 id tv_success_rate_label
@@ -183,6 +188,7 @@ layout fragment_profile
 layout fragment_webview
 layout fragment_workflow
 layout item_history
+layout item_step
 menu bottom_nav
 mipmap ic_launcher
 string app_name

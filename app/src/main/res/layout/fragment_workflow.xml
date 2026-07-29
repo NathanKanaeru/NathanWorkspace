@@ -309,16 +309,27 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_active_elapsed" />
 
+                    <LinearLayout
+                        android:id="@+id/layout_steps"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/progress_active" />
+
                     <ScrollView
                         android:id="@+id/scroll_logs"
                         android:layout_width="0dp"
-                        android:layout_height="250dp"
-                        android:layout_marginTop="12dp"
+                        android:layout_height="220dp"
+                        android:layout_marginTop="8dp"
                         android:background="@drawable/bg_logs"
                         android:padding="12dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/progress_active">
+                        app:layout_constraintTop_toBottomOf="@id/layout_steps">
 
                         <TextView
                             android:id="@+id/tv_logs"
@@ -359,7 +370,7 @@
                             style="@style/Widget.Material3.Button.OutlinedButton"
                             android:layout_width="0dp"
                             android:layout_height="48dp"
-                            android:layout_marginEnd="8dp"
+                            android:layout_marginEnd="6dp"
                             android:layout_weight="1"
                             android:text="Cancel"
                             android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
@@ -369,10 +380,21 @@
                             app:strokeColor="?attr/colorError" />
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_refresh_active"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="40dp"
+                            android:layout_height="48dp"
+                            android:padding="0dp"
+                            app:icon="@drawable/ic_refresh"
+                            app:iconSize="22dp"
+                            app:iconTint="?attr/colorOnSurfaceVariant" />
+
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_view_github"
                             style="@style/Widget.Material3.Button.TextButton"
                             android:layout_width="0dp"
                             android:layout_height="48dp"
+                            android:layout_marginStart="6dp"
                             android:layout_weight="1"
                             android:text="Open in Browser"
                             android:textAppearance="@style/TextAppearance.Material3.LabelLarge"

@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.nathan.workspace.api.GitHubApi
+import com.nathan.workspace.api.JobInfo
 import com.nathan.workspace.api.WorkflowRunInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +23,13 @@ import java.util.TimeZone
 sealed interface WorkflowUiState {
     data object Idle : WorkflowUiState
     data class Starting(val code: String) : WorkflowUiState
-    data class Running(val runId: Long, val status: String, val logs: String, val htmlUrl: String) : WorkflowUiState
+    data class Running(
+        val runId: Long,
+        val status: String,
+        val logs: String,
+        val htmlUrl: String,
+        val jobs: List<JobInfo> = emptyList()
+    ) : WorkflowUiState
     data class Completed(val entry: LogEntry) : WorkflowUiState
     data class Error(val message: String) : WorkflowUiState
 }
@@ -31,6 +38,7 @@ data class ActiveRun(
     val run: WorkflowRunInfo,
     val code: String,
     val logs: String = "",
+    val jobs: List<JobInfo> = emptyList(),
     val isRunning: Boolean = true,
     val elapsedSeconds: Long = 0L
 )
@@ -38,7 +46,8 @@ data class ActiveRun(
 data class LogEntry(
     val run: WorkflowRunInfo,
     val logs: String,
-    val endedAt: String
+    val endedAt: String,
+    val code: String = ""
 )
 
 class WorkflowViewModel(application: Application) : AndroidViewModel(application) {
@@ -82,7 +91,8 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
                     runId = active.run.id,
                     status = active.run.status,
                     logs = active.logs,
-                    htmlUrl = active.run.htmlUrl
+                    htmlUrl = active.run.htmlUrl,
+                    jobs = active.jobs
                 )
             }
         } catch (_: Exception) {
@@ -126,14 +136,19 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
                     val runResult = GitHubApi.getLatestRun(token)
                     runResult.fold(
                         onSuccess = { info ->
-                            val active = ActiveRun(run = info, code = code, isRunning = true)
+                            val active = ActiveRun(
+                                run = info,
+                                code = code,
+                                isRunning = true
+                            )
                             _activeRun.value = active
                             saveActiveRun()
                             _uiState.value = WorkflowUiState.Running(
                                 runId = info.id,
                                 status = info.status,
                                 logs = "",
-                                htmlUrl = info.htmlUrl
+                                htmlUrl = info.htmlUrl,
+                                jobs = emptyList()
                             )
                             startPolling(info.id)
                             startElapsedTimer(info.createdAt)
@@ -156,6 +171,7 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
         pollingJob = scope.launch {
             val token = getToken()
             var lastKnownLogs = ""
+            var lastKnownJobs = emptyList<JobInfo>()
 
             while (isActive) {
                 val runResult = GitHubApi.getRun(token, runId)
@@ -163,23 +179,27 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
                     onSuccess = { info ->
                         _activeRun.value = _activeRun.value?.copy(run = info)
 
-                        val logsResult = GitHubApi.getRunLogs(token, runId)
-                        logsResult.fold(
-                            onSuccess = { logs ->
-                                if (logs != lastKnownLogs) {
-                                    lastKnownLogs = logs
-                                    _activeRun.value = _activeRun.value?.copy(logs = logs)
-                                    saveActiveRun()
-                                }
-                            },
-                            onFailure = { }
-                        )
+                        val jobsResult = GitHubApi.getRunJobs(token, runId)
+                        val currentJobs = jobsResult.getOrNull() ?: lastKnownJobs
+                        val jobsChanged = currentJobs != lastKnownJobs
+                        lastKnownJobs = currentJobs
+
+                        val logs = buildLogsString(currentJobs, token)
+                        if (logs != lastKnownLogs || jobsChanged) {
+                            lastKnownLogs = logs
+                            _activeRun.value = _activeRun.value?.copy(
+                                logs = logs,
+                                jobs = currentJobs
+                            )
+                            saveActiveRun()
+                        }
 
                         if (info.status == "completed") {
                             val entry = LogEntry(
                                 run = info,
                                 logs = lastKnownLogs,
-                                endedAt = info.updatedAt
+                                endedAt = info.updatedAt,
+                                code = _activeRun.value?.code ?: ""
                             )
                             _history.value = listOf(entry) + _history.value
                             saveHistory()
@@ -188,7 +208,6 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
                             _isPolling.value = false
                             clearActiveRun()
                             _uiState.value = WorkflowUiState.Completed(entry)
-                            // Reset to idle after a brief delay
                             delay(3000)
                             _uiState.value = WorkflowUiState.Idle
                             return@launch
@@ -197,7 +216,8 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
                                 runId = info.id,
                                 status = info.status,
                                 logs = lastKnownLogs,
-                                htmlUrl = info.htmlUrl
+                                htmlUrl = info.htmlUrl,
+                                jobs = currentJobs
                             )
                         }
                     },
@@ -205,9 +225,63 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
                         _uiState.value = WorkflowUiState.Error("Gagal polling: ${error.message}")
                     }
                 )
-                delay(5000)
+                delay(4000)
             }
         }
+    }
+
+    private suspend fun buildLogsString(jobs: List<JobInfo>, token: String): String {
+        if (jobs.isEmpty()) return ""
+        val sb = StringBuilder()
+        for (job in jobs) {
+            val jobIcon = when (job.status) {
+                "completed" -> if (job.conclusion == "success") "\u2713" else "\u2717"
+                "in_progress" -> "\u25B6"
+                else -> "\u25CB"
+            }
+            val jobStatus = job.status.uppercase().replace("_", " ")
+            sb.appendLine("$jobIcon JOB: ${job.name} [$jobStatus]")
+            if (job.conclusion != null && job.conclusion != "success") {
+                sb.appendLine("  Conclusion: ${job.conclusion.uppercase()}")
+            }
+
+            for (step in job.steps) {
+                val stepIcon = when (step.status) {
+                    "completed" -> if (step.conclusion == "success") "\u2713" else "\u2717"
+                    "in_progress" -> "\u25B6"
+                    "queued" -> "\u25CB"
+                    else -> "\u25CB"
+                }
+                val stepConclusion = step.conclusion?.uppercase() ?: step.status.uppercase().replace("_", " ")
+                sb.appendLine("  $stepIcon Step ${step.number}: ${step.name} [$stepConclusion]")
+            }
+
+            if (job.status == "completed" || job.status == "in_progress") {
+                val logsResult = GitHubApi.getJobLogs(token, job.id)
+                logsResult.onSuccess { logText ->
+                    if (logText.isNotBlank()) {
+                        val truncated = logText.take(2000)
+                        sb.appendLine("  --- Logs ---")
+                        truncated.lines().forEach { line ->
+                            sb.appendLine("  $line")
+                        }
+                        if (logText.length > 2000) {
+                            sb.appendLine("  ... (${logText.length - 2000} more bytes)")
+                        }
+                        sb.appendLine("  --- End ---")
+                    }
+                }
+            }
+            sb.appendLine()
+        }
+        return sb.toString()
+    }
+
+    fun refreshActiveRun() {
+        val runId = _activeRun.value?.run?.id ?: return
+        pollingJob?.cancel()
+        _activeRun.value = _activeRun.value?.copy(isRunning = true)
+        startPolling(runId)
     }
 
     private fun startElapsedTimer(createdAt: String) {
@@ -250,9 +324,16 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
             val updated = GitHubApi.getRun(token, runId)
             updated.fold(
                 onSuccess = { info ->
-                    val logsResult = GitHubApi.getRunLogs(token, runId)
-                    val logs = logsResult.getOrNull() ?: ""
-                    val entry = LogEntry(run = info, logs = logs, endedAt = info.updatedAt)
+                    val jobsResult = GitHubApi.getRunJobs(token, runId)
+                    val logs = jobsResult.map { jobs ->
+                        buildLogsString(jobs, token)
+                    }.getOrNull() ?: _activeRun.value?.logs ?: ""
+                    val entry = LogEntry(
+                        run = info,
+                        logs = logs,
+                        endedAt = info.updatedAt,
+                        code = _activeRun.value?.code ?: ""
+                    )
                     _history.value = listOf(entry) + _history.value
                     saveHistory()
                     _uiState.value = WorkflowUiState.Completed(entry)
@@ -282,13 +363,29 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun reRunRun(token: String, entry: LogEntry) {
-        startRun(entry.run.id.toString(), token)
+    fun deleteHistoryEntryAndRun(token: String, index: Int) {
+        val entry = _history.value.getOrNull(index) ?: return
+        scope.launch {
+            GitHubApi.deleteRunLogs(token, entry.run.id)
+            GitHubApi.deleteRun(token, entry.run.id)
+            val list = _history.value.toMutableList()
+            if (index < list.size) {
+                list.removeAt(index)
+                _history.value = list
+                saveHistory()
+            }
+        }
     }
 
-    fun deleteRunLogs(token: String, runId: Long) {
+    fun reRunRun(token: String, entry: LogEntry) {
+        val code = if (entry.code.isNotBlank()) entry.code else entry.run.id.toString()
+        startRun(code, token)
+    }
+
+    fun deleteRunLogs(runId: Long) {
         scope.launch {
-            GitHubApi.deleteRunLogs(token, runId)
+            val t = getToken()
+            GitHubApi.deleteRunLogs(t, runId)
         }
     }
 
@@ -303,7 +400,8 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
                             LogEntry(
                                 run = run,
                                 logs = "",
-                                endedAt = run.updatedAt
+                                endedAt = run.updatedAt,
+                                code = ""
                             )
                         }
                     if (newEntries.isNotEmpty()) {

@@ -3311,6 +3311,7 @@ id btn_forward
 id btn_home
 id btn_logout
 id btn_refresh
+id btn_refresh_active
 id btn_rerun
 id btn_signin
 id btn_start
@@ -3464,6 +3465,7 @@ id item_touch_helper_previous_elevation
 id iv_avatar
 id iv_icon
 id iv_logo
+id iv_step_icon
 id jumpToEnd
 id jumpToStart
 id labeled
@@ -3473,6 +3475,7 @@ id layout_history
 id layout_history_header
 id layout_repo_info
 id layout_run_info
+id layout_steps
 id layout_user_info
 id left
 id leftToRight
@@ -3743,6 +3746,8 @@ id tv_logs
 id tv_repo_path
 id tv_run_title
 id tv_stats_title
+id tv_step_name
+id tv_step_status
 id tv_subtitle
 id tv_success_rate
 id tv_success_rate_label
@@ -3925,6 +3930,7 @@ layout fragment_workflow
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
 layout item_history
+layout item_step
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
 layout m3_alert_dialog_title
