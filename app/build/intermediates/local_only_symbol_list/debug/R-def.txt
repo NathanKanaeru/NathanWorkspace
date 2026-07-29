@@ -101,7 +101,7 @@ drawable ic_web
 drawable nav_color
 font inter
 id barrier_cards
-id bottom_nav
+id bottom_bar
 id btn_back
 id btn_cancel
 id btn_clear_all
@@ -133,7 +133,6 @@ id card_stats
 id card_toolbar
 id chip_active_status
 id chip_status
-id divider
 id et_code
 id et_token
 id gl_bottom
@@ -211,7 +210,5 @@ mipmap ic_launcher
 string app_name
 string loading
 string open_github
-style MyActiveIndicator
 style Theme.MyApp
 style Theme.MyApp.Splash
-style Widget.MyApp.BottomNavigationView

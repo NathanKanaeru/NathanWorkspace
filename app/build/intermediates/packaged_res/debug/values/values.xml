@@ -66,10 +66,6 @@
     <string name="app_name">Nathan Workspace</string>
     <string name="loading">Loading...</string>
     <string name="open_github">Open GitHub Profile</string>
-    <style name="MyActiveIndicator">
-        <item name="android:color">#1A3d5f90</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
-    </style>
     <style name="Theme.MyApp" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/light_primary</item>
         <item name="colorOnPrimary">@color/light_onPrimary</item>
@@ -97,15 +93,10 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/light_background</item>
-        <item name="bottomNavigationStyle">@style/Widget.MyApp.BottomNavigationView</item>
     </style>
     <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.MyApp</item>
-    </style>
-    <style name="Widget.MyApp.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="itemActiveIndicatorStyle">@style/MyActiveIndicator</item>
-        <item name="itemRippleColor">@color/ripple_selector</item>
     </style>
 </resources>

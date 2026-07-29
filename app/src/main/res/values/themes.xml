@@ -29,17 +29,6 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/light_background</item>
-        <item name="bottomNavigationStyle">@style/Widget.MyApp.BottomNavigationView</item>
-    </style>
-
-    <style name="Widget.MyApp.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="itemActiveIndicatorStyle">@style/MyActiveIndicator</item>
-        <item name="itemRippleColor">@color/ripple_selector</item>
-    </style>
-
-    <style name="MyActiveIndicator">
-        <item name="android:color">#1A3d5f90</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
     </style>
 
     <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">

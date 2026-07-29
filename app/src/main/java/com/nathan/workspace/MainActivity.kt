@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.nathan.workspace.adapter.ViewPagerAdapter
 import com.nathan.workspace.databinding.ActivityMainBinding
 
@@ -30,18 +29,15 @@ class MainActivity : AppCompatActivity() {
             page.scaleY = 1 - absPos * 0.05f
         }
 
-        binding.bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.workflowFragment -> { binding.viewpager.currentItem = 0; true }
-                R.id.webviewFragment -> { binding.viewpager.currentItem = 1; true }
-                R.id.profileFragment -> { binding.viewpager.currentItem = 2; true }
-                else -> false
+        binding.bottomBar.onItemSelected = { pos ->
+            if (binding.viewpager.currentItem != pos) {
+                binding.viewpager.currentItem = pos
             }
         }
 
         binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                binding.bottomNav.menu.getItem(position).isChecked = true
+                binding.bottomBar.itemActiveIndex = position
             }
         })
     }

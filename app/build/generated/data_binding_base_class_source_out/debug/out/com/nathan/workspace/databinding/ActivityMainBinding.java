@@ -10,31 +10,26 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import androidx.viewpager2.widget.ViewPager2;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.nathan.workspace.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
 import java.lang.String;
+import me.ibrahimsn.lib.SmoothBottomBar;
 
 public final class ActivityMainBinding implements ViewBinding {
   @NonNull
   private final ConstraintLayout rootView;
 
   @NonNull
-  public final BottomNavigationView bottomNav;
-
-  @NonNull
-  public final View divider;
+  public final SmoothBottomBar bottomBar;
 
   @NonNull
   public final ViewPager2 viewpager;
 
   private ActivityMainBinding(@NonNull ConstraintLayout rootView,
-      @NonNull BottomNavigationView bottomNav, @NonNull View divider,
-      @NonNull ViewPager2 viewpager) {
+      @NonNull SmoothBottomBar bottomBar, @NonNull ViewPager2 viewpager) {
     this.rootView = rootView;
-    this.bottomNav = bottomNav;
-    this.divider = divider;
+    this.bottomBar = bottomBar;
     this.viewpager = viewpager;
   }
 
@@ -65,15 +60,9 @@ public final class ActivityMainBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.bottom_nav;
-      BottomNavigationView bottomNav = ViewBindings.findChildViewById(rootView, id);
-      if (bottomNav == null) {
-        break missingId;
-      }
-
-      id = R.id.divider;
-      View divider = ViewBindings.findChildViewById(rootView, id);
-      if (divider == null) {
+      id = R.id.bottom_bar;
+      SmoothBottomBar bottomBar = ViewBindings.findChildViewById(rootView, id);
+      if (bottomBar == null) {
         break missingId;
       }
 
@@ -83,7 +72,7 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityMainBinding((ConstraintLayout) rootView, bottomNav, divider, viewpager);
+      return new ActivityMainBinding((ConstraintLayout) rootView, bottomBar, viewpager);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

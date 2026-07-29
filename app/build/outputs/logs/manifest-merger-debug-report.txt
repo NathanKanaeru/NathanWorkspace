@@ -5,13 +5,20 @@ INJECTED from C:\Users\runneradmin\Downloads\NathanWorkspace\app\src\main\Androi
 INJECTED from C:\Users\runneradmin\Downloads\NathanWorkspace\app\src\main\AndroidManifest.xml:2:1-31:12
 INJECTED from C:\Users\runneradmin\Downloads\NathanWorkspace\app\src\main\AndroidManifest.xml:2:1-31:12
 MERGED from [androidx.databinding:viewbinding:8.2.2] C:\Users\runneradmin\.gradle\caches\transforms-3\b93974932ecdca12f6bb7955c79b1b88\transformed\viewbinding-8.2.2\AndroidManifest.xml:2:1-7:12
+MERGED from [com.github.ibrahimsn98:SmoothBottomBar:1.7.9] C:\Users\runneradmin\.gradle\caches\transforms-3\b9a086adbcc4059b418b158b31cd35b5\transformed\SmoothBottomBar-1.7.9\AndroidManifest.xml:2:1-11:12
+MERGED from [androidx.navigation:navigation-ui-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\8dd95d9d9d6cadebc1365367684c726a\transformed\navigation-ui-ktx-2.3.5\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.navigation:navigation-ui:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\0dd36292f5e6e33094dd72fdb9f0d8b3\transformed\navigation-ui-2.3.5\AndroidManifest.xml:17:1-24:12
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\runneradmin\.gradle\caches\transforms-3\85ac1e460f54dee31cd24325c46f4773\transformed\material-1.12.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\runneradmin\.gradle\caches\transforms-3\3318d40775602b177b0b05fde0012af4\transformed\viewpager2-1.0.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\runneradmin\.gradle\caches\transforms-3\488aad099d5ebc6b5042a6b3b7d174ef\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\runneradmin\.gradle\caches\transforms-3\2fd0cb4fe98f737439d366f57b52369e\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\runneradmin\.gradle\caches\transforms-3\9756fab58daf3b55028a539310104216\transformed\appcompat-1.6.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-fragment-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\6f89879b0733c0627d9b5a61422d3ed9\transformed\navigation-fragment-ktx-2.3.5\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.navigation:navigation-fragment:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\d6f8d4b3755b3c03cdeb258a55e266c1\transformed\navigation-fragment-2.3.5\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.fragment:fragment:1.6.2] C:\Users\runneradmin\.gradle\caches\transforms-3\94fd4bd3aa22ec88d2a1ad197edb8b72\transformed\fragment-1.6.2\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.fragment:fragment-ktx:1.6.2] C:\Users\runneradmin\.gradle\caches\transforms-3\8a4c11b9854b40ae04313550784f616b\transformed\fragment-ktx-1.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\188f8311f624b385f30bdfc28daae3f1\transformed\navigation-runtime-ktx-2.3.5\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.navigation:navigation-runtime:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\e5fabac57ee6b7831228f0e6822e515b\transformed\navigation-runtime-2.3.5\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.activity:activity:1.8.2] C:\Users\runneradmin\.gradle\caches\transforms-3\15683ba0f4e359741be3d1ac6ec01816\transformed\activity-1.8.2\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.activity:activity-ktx:1.8.2] C:\Users\runneradmin\.gradle\caches\transforms-3\46b1e779e36541f6b63e5a9150272094\transformed\activity-ktx-1.8.2\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\runneradmin\.gradle\caches\transforms-3\feafe4506e00f055cc53add47b9260a0\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:17:1-22:12
@@ -35,7 +42,9 @@ MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\runneradmin\
 MERGED from [androidx.recyclerview:recyclerview:1.1.0] C:\Users\runneradmin\.gradle\caches\transforms-3\776e469d5b58adfa8a7a7e9457ca9c98\transformed\recyclerview-1.1.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\runneradmin\.gradle\caches\transforms-3\177c4fb90adee9c3b1f13ea27730489f\transformed\viewpager-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.customview:customview:1.1.0] C:\Users\runneradmin\.gradle\caches\transforms-3\f09e2c14e3ad30cd6d4e5d739ae8f55e\transformed\customview-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.navigation:navigation-common-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\ea01ffd2d9b315163b5f8c754bda26f9\transformed\navigation-common-ktx-2.3.5\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.core:core-ktx:1.13.0] C:\Users\runneradmin\.gradle\caches\transforms-3\7b17948c04e887c3aba459ff9a19474b\transformed\core-ktx-1.13.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-common:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\f2b8c7430931152ac2e88e479c77d161\transformed\navigation-common-2.3.5\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.core:core:1.13.0] C:\Users\runneradmin\.gradle\caches\transforms-3\d93937a8730259e5d4bf710a6688d189\transformed\core-1.13.0\AndroidManifest.xml:17:1-30:12
 MERGED from [androidx.lifecycle:lifecycle-runtime:2.7.0] C:\Users\runneradmin\.gradle\caches\transforms-3\c0811ff559e841342aebad900e726f1e\transformed\lifecycle-runtime-2.7.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.7.0] C:\Users\runneradmin\.gradle\caches\transforms-3\dec6e206e70a2badd417f3e586e76ac5\transformed\lifecycle-livedata-core-ktx-2.7.0\AndroidManifest.xml:2:1-7:12
@@ -132,6 +141,12 @@ INJECTED from C:\Users\runneradmin\Downloads\NathanWorkspace\app\src\main\Androi
 INJECTED from C:\Users\runneradmin\Downloads\NathanWorkspace\app\src\main\AndroidManifest.xml
 MERGED from [androidx.databinding:viewbinding:8.2.2] C:\Users\runneradmin\.gradle\caches\transforms-3\b93974932ecdca12f6bb7955c79b1b88\transformed\viewbinding-8.2.2\AndroidManifest.xml:5:5-44
 MERGED from [androidx.databinding:viewbinding:8.2.2] C:\Users\runneradmin\.gradle\caches\transforms-3\b93974932ecdca12f6bb7955c79b1b88\transformed\viewbinding-8.2.2\AndroidManifest.xml:5:5-44
+MERGED from [com.github.ibrahimsn98:SmoothBottomBar:1.7.9] C:\Users\runneradmin\.gradle\caches\transforms-3\b9a086adbcc4059b418b158b31cd35b5\transformed\SmoothBottomBar-1.7.9\AndroidManifest.xml:7:5-9:41
+MERGED from [com.github.ibrahimsn98:SmoothBottomBar:1.7.9] C:\Users\runneradmin\.gradle\caches\transforms-3\b9a086adbcc4059b418b158b31cd35b5\transformed\SmoothBottomBar-1.7.9\AndroidManifest.xml:7:5-9:41
+MERGED from [androidx.navigation:navigation-ui-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\8dd95d9d9d6cadebc1365367684c726a\transformed\navigation-ui-ktx-2.3.5\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-ui-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\8dd95d9d9d6cadebc1365367684c726a\transformed\navigation-ui-ktx-2.3.5\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-ui:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\0dd36292f5e6e33094dd72fdb9f0d8b3\transformed\navigation-ui-2.3.5\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-ui:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\0dd36292f5e6e33094dd72fdb9f0d8b3\transformed\navigation-ui-2.3.5\AndroidManifest.xml:20:5-22:41
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\runneradmin\.gradle\caches\transforms-3\85ac1e460f54dee31cd24325c46f4773\transformed\material-1.12.0\AndroidManifest.xml:20:5-44
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\runneradmin\.gradle\caches\transforms-3\85ac1e460f54dee31cd24325c46f4773\transformed\material-1.12.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\runneradmin\.gradle\caches\transforms-3\3318d40775602b177b0b05fde0012af4\transformed\viewpager2-1.0.0\AndroidManifest.xml:20:5-22:41
@@ -142,10 +157,18 @@ MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\runneradmin\
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\runneradmin\.gradle\caches\transforms-3\2fd0cb4fe98f737439d366f57b52369e\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\runneradmin\.gradle\caches\transforms-3\9756fab58daf3b55028a539310104216\transformed\appcompat-1.6.1\AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\runneradmin\.gradle\caches\transforms-3\9756fab58daf3b55028a539310104216\transformed\appcompat-1.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-fragment-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\6f89879b0733c0627d9b5a61422d3ed9\transformed\navigation-fragment-ktx-2.3.5\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-fragment-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\6f89879b0733c0627d9b5a61422d3ed9\transformed\navigation-fragment-ktx-2.3.5\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-fragment:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\d6f8d4b3755b3c03cdeb258a55e266c1\transformed\navigation-fragment-2.3.5\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-fragment:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\d6f8d4b3755b3c03cdeb258a55e266c1\transformed\navigation-fragment-2.3.5\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.fragment:fragment:1.6.2] C:\Users\runneradmin\.gradle\caches\transforms-3\94fd4bd3aa22ec88d2a1ad197edb8b72\transformed\fragment-1.6.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.fragment:fragment:1.6.2] C:\Users\runneradmin\.gradle\caches\transforms-3\94fd4bd3aa22ec88d2a1ad197edb8b72\transformed\fragment-1.6.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.fragment:fragment-ktx:1.6.2] C:\Users\runneradmin\.gradle\caches\transforms-3\8a4c11b9854b40ae04313550784f616b\transformed\fragment-ktx-1.6.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.fragment:fragment-ktx:1.6.2] C:\Users\runneradmin\.gradle\caches\transforms-3\8a4c11b9854b40ae04313550784f616b\transformed\fragment-ktx-1.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\188f8311f624b385f30bdfc28daae3f1\transformed\navigation-runtime-ktx-2.3.5\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\188f8311f624b385f30bdfc28daae3f1\transformed\navigation-runtime-ktx-2.3.5\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-runtime:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\e5fabac57ee6b7831228f0e6822e515b\transformed\navigation-runtime-2.3.5\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-runtime:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\e5fabac57ee6b7831228f0e6822e515b\transformed\navigation-runtime-2.3.5\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.activity:activity:1.8.2] C:\Users\runneradmin\.gradle\caches\transforms-3\15683ba0f4e359741be3d1ac6ec01816\transformed\activity-1.8.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.activity:activity:1.8.2] C:\Users\runneradmin\.gradle\caches\transforms-3\15683ba0f4e359741be3d1ac6ec01816\transformed\activity-1.8.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.activity:activity-ktx:1.8.2] C:\Users\runneradmin\.gradle\caches\transforms-3\46b1e779e36541f6b63e5a9150272094\transformed\activity-ktx-1.8.2\AndroidManifest.xml:5:5-44
@@ -192,8 +215,12 @@ MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\runneradmin\.gradle\ca
 MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\runneradmin\.gradle\caches\transforms-3\177c4fb90adee9c3b1f13ea27730489f\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.customview:customview:1.1.0] C:\Users\runneradmin\.gradle\caches\transforms-3\f09e2c14e3ad30cd6d4e5d739ae8f55e\transformed\customview-1.1.0\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.customview:customview:1.1.0] C:\Users\runneradmin\.gradle\caches\transforms-3\f09e2c14e3ad30cd6d4e5d739ae8f55e\transformed\customview-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-common-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\ea01ffd2d9b315163b5f8c754bda26f9\transformed\navigation-common-ktx-2.3.5\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-common-ktx:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\ea01ffd2d9b315163b5f8c754bda26f9\transformed\navigation-common-ktx-2.3.5\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.core:core-ktx:1.13.0] C:\Users\runneradmin\.gradle\caches\transforms-3\7b17948c04e887c3aba459ff9a19474b\transformed\core-ktx-1.13.0\AndroidManifest.xml:5:5-44
 MERGED from [androidx.core:core-ktx:1.13.0] C:\Users\runneradmin\.gradle\caches\transforms-3\7b17948c04e887c3aba459ff9a19474b\transformed\core-ktx-1.13.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-common:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\f2b8c7430931152ac2e88e479c77d161\transformed\navigation-common-2.3.5\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.navigation:navigation-common:2.3.5] C:\Users\runneradmin\.gradle\caches\transforms-3\f2b8c7430931152ac2e88e479c77d161\transformed\navigation-common-2.3.5\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.core:core:1.13.0] C:\Users\runneradmin\.gradle\caches\transforms-3\d93937a8730259e5d4bf710a6688d189\transformed\core-1.13.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.core:core:1.13.0] C:\Users\runneradmin\.gradle\caches\transforms-3\d93937a8730259e5d4bf710a6688d189\transformed\core-1.13.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-runtime:2.7.0] C:\Users\runneradmin\.gradle\caches\transforms-3\c0811ff559e841342aebad900e726f1e\transformed\lifecycle-runtime-2.7.0\AndroidManifest.xml:5:5-44

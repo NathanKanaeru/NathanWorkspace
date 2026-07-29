@@ -29,11 +29,5 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/background</item>
-        <item name="bottomNavigationStyle">@style/Widget.MyApp.BottomNavigationView</item>
-    </style>
-
-    <style name="MyActiveIndicator">
-        <item name="android:color">#1Aa6c8ff</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
     </style>
 </resources>
