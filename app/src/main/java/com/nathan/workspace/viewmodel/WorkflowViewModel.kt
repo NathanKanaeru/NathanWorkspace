@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
@@ -140,40 +141,49 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun startRun(code: String, token: String) {
-        // If there's a completed run, clear it first
         if (_uiState.value is WorkflowUiState.Completed) {
             clearActiveRun()
         }
         _uiState.value = WorkflowUiState.Starting(code)
+
+        val beforeTrigger = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }.format(Date())
+
         scope.launch {
             val result = GitHubApi.triggerWorkflow(token, code)
             result.fold(
                 onSuccess = {
-                    delay(3000)
-                    val runResult = GitHubApi.getLatestRun(token)
-                    runResult.fold(
-                        onSuccess = { info ->
-                            val active = ActiveRun(
-                                run = info,
-                                code = code,
-                                isRunning = true
-                            )
-                            _activeRun.value = active
-                            saveActiveRun()
-                            _uiState.value = WorkflowUiState.Running(
-                                runId = info.id,
-                                status = info.status,
-                                logs = "",
-                                htmlUrl = info.htmlUrl,
-                                jobs = emptyList()
-                            )
-                            startPolling(info.id)
-                            startElapsedTimer(info.createdAt)
-                        },
-                        onFailure = { error ->
-                            _uiState.value = WorkflowUiState.Error("Gagal mendapatkan run info: ${error.message}")
+                    var ourRun: WorkflowRunInfo? = null
+                    var attempt = 0
+                    while (ourRun == null && attempt < 12) {
+                        delay(3000)
+                        attempt++
+                        val listResult = GitHubApi.listRuns(token, 5)
+                        listResult.onSuccess { runs ->
+                            ourRun = runs.firstOrNull { it.createdAt >= beforeTrigger }
                         }
-                    )
+                    }
+                    ourRun?.let { info ->
+                        val active = ActiveRun(
+                            run = info,
+                            code = code,
+                            isRunning = true
+                        )
+                        _activeRun.value = active
+                        saveActiveRun()
+                        _uiState.value = WorkflowUiState.Running(
+                            runId = info.id,
+                            status = info.status,
+                            logs = "",
+                            htmlUrl = info.htmlUrl,
+                            jobs = emptyList()
+                        )
+                        startPolling(info.id)
+                        startElapsedTimer(info.createdAt)
+                    } ?: run {
+                        _uiState.value = WorkflowUiState.Error("Gagal menemukan run yang baru dibuat")
+                    }
                 },
                 onFailure = { error ->
                     _uiState.value = WorkflowUiState.Error("Gagal trigger workflow: ${error.message}")
