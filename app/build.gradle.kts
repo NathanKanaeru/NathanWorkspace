@@ -19,8 +19,8 @@ android {
         applicationId = "com.nathan.workspace"
         minSdk = 29
         targetSdk = 34
-        versionCode = 9
-        versionName = "2.4"
+        versionCode = 10
+        versionName = "2.5"
     }
 
     signingConfigs {
