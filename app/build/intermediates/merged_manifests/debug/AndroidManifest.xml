@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nathan.workspace"
-    android:versionCode="5"
-    android:versionName="2.0" >
+    android:versionCode="9"
+    android:versionName="2.4" >
 
     <uses-sdk
         android:minSdkVersion="29"
         android:targetSdkVersion="34" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <permission
         android:name="com.nathan.workspace.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
@@ -41,6 +42,15 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.nathan.workspace.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="com.nathan.workspace.androidx-startup"

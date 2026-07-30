@@ -2,8 +2,6 @@ package com.nathan.workspace.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.nathan.workspace.api.GitHubApi
 import com.nathan.workspace.api.JobInfo
 import com.nathan.workspace.api.WorkflowRunInfo
@@ -16,248 +14,131 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
-
-sealed interface WorkflowUiState {
-    data object Idle : WorkflowUiState
-    data class Starting(val code: String) : WorkflowUiState
-    data class Running(
-        val runId: Long,
-        val status: String,
-        val logs: String,
-        val htmlUrl: String,
-        val jobs: List<JobInfo> = emptyList()
-    ) : WorkflowUiState
-    data class Completed(val entry: LogEntry) : WorkflowUiState
-    data class Error(val message: String) : WorkflowUiState
-}
-
-data class ActiveRun(
-    val run: WorkflowRunInfo,
-    val code: String,
-    val logs: String = "",
-    val jobs: List<JobInfo> = emptyList(),
-    val isRunning: Boolean = true,
-    val elapsedSeconds: Long = 0L
-)
-
-data class LogEntry(
-    val run: WorkflowRunInfo,
-    val logs: String,
-    val endedAt: String,
-    val code: String = ""
-)
 
 class WorkflowViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val prefs = application.getSharedPreferences("workflow", Application.MODE_PRIVATE)
-    private val gson = Gson()
+    private val _runs = MutableStateFlow<List<WorkflowRunInfo>>(emptyList())
+    val runs: StateFlow<List<WorkflowRunInfo>> = _runs.asStateFlow()
 
-    private val _activeRun = MutableStateFlow<ActiveRun?>(null)
-    val activeRun: StateFlow<ActiveRun?> = _activeRun.asStateFlow()
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _history = MutableStateFlow<List<LogEntry>>(emptyList())
-    val history: StateFlow<List<LogEntry>> = _history.asStateFlow()
-
-    private val _isPolling = MutableStateFlow(false)
-    val isPolling: StateFlow<Boolean> = _isPolling.asStateFlow()
-
-    private val _uiState = MutableStateFlow<WorkflowUiState>(WorkflowUiState.Idle)
-    val uiState: StateFlow<WorkflowUiState> = _uiState.asStateFlow()
-
-    private val _elapsedTime = MutableStateFlow("00:00")
-    val elapsedTime: StateFlow<String> = _elapsedTime.asStateFlow()
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error.asStateFlow()
 
     private var pollingJob: Job? = null
-    private var elapsedJob: Job? = null
     private val scope = CoroutineScope(Dispatchers.Main)
 
-    init {
-        loadHistory()
-        restoreActiveRun()
-    }
-
-    private fun restoreActiveRun() {
-        val json = prefs.getString("active_run", null) ?: return
-        try {
-            val active = gson.fromJson(json, ActiveRun::class.java)
-            _activeRun.value = active
-            if (active.isRunning) {
-                startPolling(active.run.id)
-                startElapsedTimer(active.run.createdAt)
-                _uiState.value = WorkflowUiState.Running(
-                    runId = active.run.id,
-                    status = active.run.status,
-                    logs = active.logs,
-                    htmlUrl = active.run.htmlUrl,
-                    jobs = active.jobs
-                )
-            } else {
-                val entry = LogEntry(
-                    run = active.run,
-                    logs = active.logs,
-                    endedAt = active.run.updatedAt,
-                    code = active.code
-                )
-                _uiState.value = WorkflowUiState.Completed(entry)
+    fun startPolling(token: String) {
+        if (pollingJob?.isActive == true) return
+        pollingJob = scope.launch {
+            while (isActive) {
+                fetchRuns(token, isBackground = true)
+                
+                val currentRuns = _runs.value
+                val hasActive = currentRuns.any { it.status == "in_progress" || it.status == "queued" }
+                val delayTime = if (hasActive) 4000L else 10000L
+                delay(delayTime)
             }
-        } catch (_: Exception) {
-            prefs.edit().remove("active_run").apply()
         }
     }
 
-    private fun saveActiveRun() {
-        _activeRun.value?.let {
-            prefs.edit().putString("active_run", gson.toJson(it)).apply()
+    fun stopPolling() {
+        pollingJob?.cancel()
+        pollingJob = null
+    }
+
+    fun refreshRuns(token: String) {
+        scope.launch {
+            fetchRuns(token, isBackground = false)
         }
     }
 
-    private fun clearActiveRun() {
-        _activeRun.value = null
-        _elapsedTime.value = "00:00"
-        prefs.edit().remove("active_run").apply()
-    }
-
-    private fun loadHistory() {
-        val json = prefs.getString("history", null) ?: return
-        try {
-            val type = object : TypeToken<List<LogEntry>>() {}.type
-            _history.value = gson.fromJson(json, type)
-        } catch (_: Exception) {
-            prefs.edit().remove("history").apply()
+    private suspend fun fetchRuns(token: String, isBackground: Boolean) {
+        if (!isBackground) {
+            _isLoading.value = true
         }
-    }
-
-    private fun saveHistory() {
-        prefs.edit().putString("history", gson.toJson(_history.value)).apply()
-    }
-
-    fun dismissCompleted() {
-        _uiState.value = WorkflowUiState.Idle
-        clearActiveRun()
+        val result = GitHubApi.listRuns(token, 20)
+        result.fold(
+            onSuccess = { fetchedRuns ->
+                _runs.value = fetchedRuns
+                _error.value = null
+            },
+            onFailure = { e ->
+                if (!isBackground) {
+                    _error.value = "Failed to fetch runs: ${e.message}"
+                }
+            }
+        )
+        if (!isBackground) {
+            _isLoading.value = false
+        }
     }
 
     fun startRun(code: String, token: String) {
-        if (_uiState.value is WorkflowUiState.Completed) {
-            clearActiveRun()
-        }
-        _uiState.value = WorkflowUiState.Starting(code)
-
-        val beforeTrigger = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
-            timeZone = TimeZone.getTimeZone("UTC")
-        }.format(Date())
-
+        _isLoading.value = true
         scope.launch {
             val result = GitHubApi.triggerWorkflow(token, code)
             result.fold(
                 onSuccess = {
-                    var ourRun: WorkflowRunInfo? = null
-                    var attempt = 0
-                    while (ourRun == null && attempt < 12) {
-                        delay(3000)
-                        attempt++
-                        val listResult = GitHubApi.listRuns(token, 5)
-                        listResult.onSuccess { runs ->
-                            ourRun = runs.firstOrNull { it.createdAt >= beforeTrigger }
-                        }
-                    }
-                    ourRun?.let { info ->
-                        val active = ActiveRun(
-                            run = info,
-                            code = code,
-                            isRunning = true
-                        )
-                        _activeRun.value = active
-                        saveActiveRun()
-                        _uiState.value = WorkflowUiState.Running(
-                            runId = info.id,
-                            status = info.status,
-                            logs = "",
-                            htmlUrl = info.htmlUrl,
-                            jobs = emptyList()
-                        )
-                        startPolling(info.id)
-                        startElapsedTimer(info.createdAt)
-                    } ?: run {
-                        _uiState.value = WorkflowUiState.Error("Gagal menemukan run yang baru dibuat")
-                    }
+                    _error.value = null
+                    delay(2000)
+                    fetchRuns(token, isBackground = false)
                 },
-                onFailure = { error ->
-                    _uiState.value = WorkflowUiState.Error("Gagal trigger workflow: ${error.message}")
+                onFailure = { e ->
+                    _error.value = "Failed to trigger workflow: ${e.message}"
+                    _isLoading.value = false
                 }
             )
         }
     }
 
-    private fun startPolling(runId: Long) {
-        pollingJob?.cancel()
-        _isPolling.value = true
-        pollingJob = scope.launch {
-            val token = getToken()
-            var lastKnownLogs = ""
-            var lastKnownJobs = emptyList<JobInfo>()
-
-            while (isActive) {
-                val runResult = GitHubApi.getRun(token, runId)
-                runResult.fold(
-                    onSuccess = { info ->
-                        _activeRun.value = _activeRun.value?.copy(run = info)
-
-                        val jobsResult = GitHubApi.getRunJobs(token, runId)
-                        val currentJobs = jobsResult.getOrNull() ?: lastKnownJobs
-                        val jobsChanged = currentJobs != lastKnownJobs
-                        lastKnownJobs = currentJobs
-
-                        val logs = buildLogsString(currentJobs, token)
-                        if (logs != lastKnownLogs || jobsChanged) {
-                            lastKnownLogs = logs
-                            _activeRun.value = _activeRun.value?.copy(
-                                logs = logs,
-                                jobs = currentJobs
-                            )
-                            saveActiveRun()
-                        }
-
-                        if (info.status == "completed") {
-                            val entry = LogEntry(
-                                run = info,
-                                logs = lastKnownLogs,
-                                endedAt = info.updatedAt,
-                                code = _activeRun.value?.code ?: ""
-                            )
-                            _history.value = listOf(entry) + _history.value
-                            saveHistory()
-                            pollingJob?.cancel()
-                            elapsedJob?.cancel()
-                            _isPolling.value = false
-                            _activeRun.value = _activeRun.value?.copy(isRunning = false)
-                            saveActiveRun()
-                            _uiState.value = WorkflowUiState.Completed(entry)
-                            return@launch
-                        } else {
-                            _uiState.value = WorkflowUiState.Running(
-                                runId = info.id,
-                                status = info.status,
-                                logs = lastKnownLogs,
-                                htmlUrl = info.htmlUrl,
-                                jobs = currentJobs
-                            )
-                        }
-                    },
-                    onFailure = { error ->
-                        _uiState.value = WorkflowUiState.Error("Gagal polling: ${error.message}")
-                    }
-                )
-                delay(4000)
+    fun cancelRun(token: String, runId: Long) {
+        scope.launch {
+            val result = GitHubApi.cancelRun(token, runId)
+            if (result.isSuccess) {
+                delay(1000)
+                fetchRuns(token, isBackground = false)
+            } else {
+                _error.value = "Failed to cancel run: ${result.exceptionOrNull()?.message}"
             }
         }
     }
 
+    fun deleteRun(token: String, runId: Long) {
+        scope.launch {
+            val result = GitHubApi.deleteRun(token, runId)
+            if (result.isSuccess) {
+                _runs.value = _runs.value.filter { it.id != runId }
+            } else {
+                _error.value = "Failed to delete run: ${result.exceptionOrNull()?.message}"
+            }
+        }
+    }
+
+    fun deleteRunLogs(token: String, runId: Long) {
+        scope.launch {
+            val result = GitHubApi.deleteRunLogs(token, runId)
+            if (result.isFailure) {
+                _error.value = "Failed to delete logs: ${result.exceptionOrNull()?.message}"
+            } else {
+                _error.value = "Logs deleted successfully (refresh might be needed)"
+            }
+        }
+    }
+
+    fun clearError() {
+        _error.value = null
+    }
+
+    suspend fun fetchLogs(token: String, runId: Long): String {
+        val jobsResult = GitHubApi.getRunJobs(token, runId)
+        val jobs = jobsResult.getOrNull() ?: emptyList()
+        return buildLogsString(jobs, token)
+    }
+
     private suspend fun buildLogsString(jobs: List<JobInfo>, token: String): String {
-        if (jobs.isEmpty()) return ""
+        if (jobs.isEmpty()) return "No jobs found for this run."
         val sb = StringBuilder()
         for (job in jobs) {
             val jobIcon = when (job.status) {
@@ -303,129 +184,8 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
         return sb.toString()
     }
 
-    fun refreshActiveRun() {
-        val runId = _activeRun.value?.run?.id ?: return
-        pollingJob?.cancel()
-        _activeRun.value = _activeRun.value?.copy(isRunning = true)
-        startPolling(runId)
-    }
-
-    private fun startElapsedTimer(createdAt: String) {
-        elapsedJob?.cancel()
-        elapsedJob = scope.launch {
-            val createdMillis = parseIso8601(createdAt)
-            while (isActive) {
-                val elapsed = (System.currentTimeMillis() - createdMillis) / 1000
-                _activeRun.value = _activeRun.value?.copy(elapsedSeconds = elapsed)
-                _elapsedTime.value = formatElapsed(elapsed)
-                delay(1000)
-            }
-        }
-    }
-
-    private fun parseIso8601(dateStr: String): Long {
-        return try {
-            val fmt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
-            fmt.timeZone = TimeZone.getTimeZone("UTC")
-            fmt.parse(dateStr)?.time ?: System.currentTimeMillis()
-        } catch (_: Exception) {
-            System.currentTimeMillis()
-        }
-    }
-
-    private fun formatElapsed(seconds: Long): String {
-        val mins = seconds / 60
-        val secs = seconds % 60
-        return "%02d:%02d".format(mins, secs)
-    }
-
-    fun cancelRun(token: String) {
-        val runId = _activeRun.value?.run?.id ?: return
-        scope.launch {
-            GitHubApi.cancelRun(token, runId)
-            pollingJob?.cancel()
-            elapsedJob?.cancel()
-            _isPolling.value = false
-            _activeRun.value = _activeRun.value?.copy(isRunning = false)
-            val updated = GitHubApi.getRun(token, runId)
-            updated.fold(
-                onSuccess = { info ->
-                    val jobsResult = GitHubApi.getRunJobs(token, runId)
-                    val logs = jobsResult.map { jobs ->
-                        buildLogsString(jobs, token)
-                    }.getOrNull() ?: _activeRun.value?.logs ?: ""
-                    val entry = LogEntry(
-                        run = info,
-                        logs = logs,
-                        endedAt = info.updatedAt,
-                        code = _activeRun.value?.code ?: ""
-                    )
-                    _history.value = listOf(entry) + _history.value
-                    saveHistory()
-                    _activeRun.value = _activeRun.value?.copy(isRunning = false)
-                    saveActiveRun()
-                    _uiState.value = WorkflowUiState.Completed(entry)
-                },
-                onFailure = {
-                    _uiState.value = WorkflowUiState.Error("Gagal cancel workflow")
-                }
-            )
-        }
-    }
-
-    fun deleteHistoryEntry(token: String, index: Int) {
-        val entry = _history.value.getOrNull(index) ?: return
-        scope.launch {
-            GitHubApi.deleteRunLogs(token, entry.run.id)
-            val list = _history.value.toMutableList()
-            if (index < list.size) {
-                list.removeAt(index)
-                _history.value = list
-                saveHistory()
-            }
-        }
-    }
-
-    fun deleteHistoryEntryAndRun(token: String, index: Int) {
-        val entry = _history.value.getOrNull(index) ?: return
-        scope.launch {
-            GitHubApi.deleteRunLogs(token, entry.run.id)
-            GitHubApi.deleteRun(token, entry.run.id)
-            val list = _history.value.toMutableList()
-            if (index < list.size) {
-                list.removeAt(index)
-                _history.value = list
-                saveHistory()
-            }
-        }
-    }
-
-    fun reRunRun(token: String, entry: LogEntry) {
-        val code = if (entry.code.isNotBlank()) entry.code else entry.run.id.toString()
-        startRun(code, token)
-    }
-
-    fun deleteRunLogs(runId: Long) {
-        scope.launch {
-            val t = getToken()
-            GitHubApi.deleteRunLogs(t, runId)
-        }
-    }
-
-    fun clearHistory() {
-        _history.value = emptyList()
-        prefs.edit().remove("history").apply()
-    }
-
-    private fun getToken(): String {
-        return getApplication<Application>()
-            .getSharedPreferences("app", Application.MODE_PRIVATE)
-            .getString("github_token", "") ?: ""
-    }
-
     override fun onCleared() {
         super.onCleared()
-        pollingJob?.cancel()
-        elapsedJob?.cancel()
+        stopPolling()
     }
 }

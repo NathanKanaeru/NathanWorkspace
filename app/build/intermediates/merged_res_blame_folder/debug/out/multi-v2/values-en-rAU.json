@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.nathan.workspace.app-mergeDebugResources-41:/values-en-rAU/values-en-rAU.xml",
+            "outputFile": "com.nathan.workspace.app-mergeDebugResources-42:/values-en-rAU/values-en-rAU.xml",
             "map": [
                 {
                     "source": "C:\\Users\\runneradmin\\.gradle\\caches\\transforms-3\\9756fab58daf3b55028a539310104216\\transformed\\appcompat-1.6.1\\res\\values-en-rAU\\values-en-rAU.xml",

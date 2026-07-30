@@ -36,11 +36,17 @@ class WebViewFragment : Fragment() {
         binding.webview.apply {
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
+            settings.databaseEnabled = true
+            settings.mediaPlaybackRequiresUserGesture = false
+            settings.javaScriptCanOpenWindowsAutomatically = true
             settings.loadWithOverviewMode = true
             settings.useWideViewPort = true
             settings.builtInZoomControls = true
             settings.displayZoomControls = false
             settings.cacheMode = WebSettings.LOAD_DEFAULT
+            
+            android.webkit.CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
+            setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
             webViewClient = object : WebViewClient() {
 
@@ -147,12 +153,24 @@ class WebViewFragment : Fragment() {
         binding.btnForward.alpha = fwdAlpha
     }
 
+    override fun onResume() {
+        super.onResume()
+        _binding?.webview?.onResume()
+        _binding?.webview?.requestFocus()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        _binding?.webview?.onPause()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         binding.webview.saveState(outState)
     }
 
     override fun onDestroyView() {
+        _binding?.webview?.destroy()
         super.onDestroyView()
         _binding = null
     }

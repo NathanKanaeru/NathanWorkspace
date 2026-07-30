@@ -8,21 +8,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.edit
 import androidx.fragment.app.Fragment
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.nathan.workspace.BuildConfig
 import com.nathan.workspace.LoginActivity
-import com.nathan.workspace.R
 import com.nathan.workspace.databinding.FragmentProfileBinding
-import com.nathan.workspace.viewmodel.LogEntry
+import com.nathan.workspace.viewmodel.WorkflowViewModel
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private var login: String = ""
+    private val viewModel: WorkflowViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -42,7 +44,31 @@ class ProfileFragment : Fragment() {
         binding.tvUserLogin.text = "@$login"
         binding.tvVersion.text = BuildConfig.VERSION_NAME
 
-        loadWorkflowStats()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.runs.collect { runs ->
+                    if (runs.isNotEmpty()) {
+                        val total = runs.size
+                        val successCount = runs.count { it.conclusion == "success" }
+                        val failCount = runs.count {
+                            val c = it.conclusion
+                            c != null && c != "success" && c != "cancelled" && c != "canceled"
+                        }
+                        val successRate = if (total > 0) (successCount * 100) / total else 0
+
+                        binding.tvTotalRuns.text = total.toString()
+                        binding.tvSuccessRate.text = "$successRate%"
+                        binding.tvFailed.text = failCount.toString()
+                        binding.tvLastRun.text = runs.first().createdAt.take(10)
+                    } else {
+                        binding.tvTotalRuns.text = "0"
+                        binding.tvSuccessRate.text = "0%"
+                        binding.tvFailed.text = "0"
+                        binding.tvLastRun.text = "-"
+                    }
+                }
+            }
+        }
 
         binding.btnOpenGithub.setOnClickListener {
             openUrl("https://github.com/$login")
@@ -56,8 +82,8 @@ class ProfileFragment : Fragment() {
             showLicensesDialog()
         }
 
-        binding.btnClearHistory.setOnClickListener {
-            showClearHistoryDialog()
+        binding.btnClearCache.setOnClickListener {
+            showClearCacheDialog()
         }
 
         binding.btnClearAll.setOnClickListener {
@@ -69,62 +95,36 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun loadWorkflowStats() {
-        try {
-            val workflowPrefs = requireActivity().getSharedPreferences("workflow", Context.MODE_PRIVATE)
-            val json = workflowPrefs.getString("history", null)
-            if (json != null) {
-                val type = object : TypeToken<List<LogEntry>>() {}.type
-                val history: List<LogEntry> = Gson().fromJson(json, type)
-
-                if (history.isNotEmpty()) {
-                    val total = history.size
-                    val successCount = history.count { it.run.conclusion == "success" }
-                    val failCount = history.count {
-                        val c = it.run.conclusion
-                        c != "success" && c != "cancelled" && c != "canceled"
-                    }
-                    val successRate = (successCount * 100) / total
-
-                    binding.tvTotalRuns.text = total.toString()
-                    binding.tvSuccessRate.text = "$successRate%"
-                    binding.tvFailed.text = failCount.toString()
-                    binding.tvLastRun.text = history.first().endedAt.take(10)
-                }
-            }
-        } catch (_: Exception) { }
-    }
-
     private fun openUrl(url: String) {
         try {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (_: Exception) { }
     }
 
-    private fun showClearHistoryDialog() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Clear Workflow History")
-            .setMessage("This will remove all workflow history from this device. GitHub runs will not be affected.")
+    private fun showClearCacheDialog() {
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Clear Download Cache")
+            .setMessage("This will remove all downloaded APK files from your device. Do you want to continue?")
             .setPositiveButton("Clear") { _, _ ->
-                requireActivity().getSharedPreferences("workflow", Context.MODE_PRIVATE)
-                    .edit().remove("history").apply()
-                loadWorkflowStats()
-                showToast("History cleared")
+                val dir = java.io.File(requireContext().getExternalFilesDir(android.os.Environment.DIRECTORY_DOWNLOADS), "")
+                if (dir.exists() && dir.isDirectory) {
+                    dir.listFiles()?.forEach { it.delete() }
+                }
+                android.widget.Toast.makeText(requireContext(), "Download cache cleared", android.widget.Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
 
     private fun showClearAllDialog() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Clear All Data")
-            .setMessage("This will remove all workflow history and active run data from this device. GitHub data will not be affected. You will need to sign in again.")
-            .setPositiveButton("Clear All") { _, _ ->
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Clear Local Data")
+            .setMessage("This will remove local app data. GitHub data will not be affected. You will need to sign in again.")
+            .setPositiveButton("Clear Data") { _, _ ->
                 requireActivity().getSharedPreferences("workflow", Context.MODE_PRIVATE)
                     .edit().clear().apply()
                 requireContext().getSharedPreferences("app", Context.MODE_PRIVATE)
                     .edit().clear().apply()
-                loadWorkflowStats()
                 navigateToLogin()
             }
             .setNegativeButton("Cancel", null)
@@ -132,9 +132,9 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showLogoutDialog() {
-        AlertDialog.Builder(requireContext())
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
             .setTitle("Sign Out")
-            .setMessage("Are you sure you want to sign out? Workflow history will be preserved.")
+            .setMessage("Are you sure you want to sign out?")
             .setPositiveButton("Sign Out") { _, _ ->
                 requireContext().getSharedPreferences("app", Context.MODE_PRIVATE)
                     .edit().clear().apply()
@@ -145,31 +145,28 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showLicensesDialog() {
-        val licenses = """
-            Nathan Workspace
-            
-            Copyright 2024 NathanKanaeru
-            
-            Licensed under the Apache License, Version 2.0 (the "License");
-            you may not use this file except in compliance with the License.
-            You may obtain a copy of the License at
-            
-                http://www.apache.org/licenses/LICENSE-2.0
-            
-            Unless required by applicable law or agreed to in writing, software
-            distributed under the License is distributed on an "AS IS" BASIS,
-            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-            
-            ---
-            
-            This application uses the following open source libraries:
-            - OkHttp 4.12 (Apache 2.0)
-            - Gson (Apache 2.0)
-            - Material Components for Android (Apache 2.0)
-            - Android Jetpack (Apache 2.0)
-        """.trimIndent()
+        val licenses = android.text.Html.fromHtml(
+            """
+            <b>Nathan Workspace</b><br><br>
+            Copyright 2026 NathanKanaeru<br><br>
+            Licensed under the Apache License, Version 2.0 (the "License");<br>
+            you may not use this file except in compliance with the License.<br>
+            You may obtain a copy of the License at<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;http://www.apache.org/licenses/LICENSE-2.0<br><br>
+            Unless required by applicable law or agreed to in writing, software<br>
+            distributed under the License is distributed on an "AS IS" BASIS,<br>
+            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+            <br><hr><br>
+            <b>Third-Party Libraries:</b><br>
+            • OkHttp 4.12 <i>(Apache 2.0)</i><br>
+            • Gson <i>(Apache 2.0)</i><br>
+            • Material Components for Android <i>(Apache 2.0)</i><br>
+            • Android Jetpack <i>(Apache 2.0)</i>
+            """.trimIndent(),
+            android.text.Html.FROM_HTML_MODE_COMPACT
+        )
 
-        AlertDialog.Builder(requireContext())
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
             .setTitle("Open Source Licenses")
             .setMessage(licenses)
             .setPositiveButton("Close", null)
@@ -182,10 +179,6 @@ class ProfileFragment : Fragment() {
         }
         startActivity(intent)
         requireActivity().finishAffinity()
-    }
-
-    private fun showToast(message: String) {
-        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

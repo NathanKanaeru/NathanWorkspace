@@ -19,8 +19,8 @@ android {
         applicationId = "com.nathan.workspace"
         minSdk = 29
         targetSdk = 34
-        versionCode = 7
-        versionName = "2.2"
+        versionCode = 9
+        versionName = "2.4"
     }
 
     signingConfigs {
@@ -33,6 +33,9 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("release")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

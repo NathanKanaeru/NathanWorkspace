@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.nathan.workspace.app-mergeDebugResources-41:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.nathan.workspace.app-mergeDebugResources-42:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
                     "source": "C:\\Users\\runneradmin\\.gradle\\caches\\transforms-3\\85ac1e460f54dee31cd24325c46f4773\\transformed\\material-1.12.0\\res\\values-night-v8\\values-night-v8.xml",
@@ -35,10 +35,10 @@
                     "from": {
                         "startLines": "4",
                         "startColumns": "4",
-                        "startOffsets": "173",
+                        "startOffsets": "177",
                         "endLines": "31",
                         "endColumns": "12",
-                        "endOffsets": "2017"
+                        "endOffsets": "2048"
                     },
                     "to": {
                         "startLines": "36",

@@ -1,45 +1,39 @@
 package com.nathan.workspace.ui
 
+import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.material.button.MaterialButton
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.card.MaterialCardView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.nathan.workspace.R
 import com.nathan.workspace.api.AssetInfo
 import com.nathan.workspace.api.GitHubApi
 import com.nathan.workspace.api.ReleaseInfo
 import com.nathan.workspace.databinding.FragmentRepoBinding
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import java.io.File
-import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
@@ -49,12 +43,22 @@ class RepoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val api = GitHubApi
-    private val downloadScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-    private val downloadJobs = mutableMapOf<Long, Job>()
-    private val downloadProgress = mutableMapOf<Long, Int>()
-
     private var releases = emptyList<ReleaseInfo>()
     private var token: String = ""
+    private var showAllReleases = false
+
+    private lateinit var downloadManager: DownloadManager
+    private lateinit var prefs: SharedPreferences
+
+    // Track active downloads: DownloadManager ID -> Asset ID
+    private val activeDownloads = mutableMapOf<Long, Long>()
+    
+    // UI state for progress
+    private val progressMap = mutableMapOf<Long, Int>() // Asset ID -> Progress %
+    private val speedMap = mutableMapOf<Long, String>() // Asset ID -> Speed text
+    
+    // For speed calculation
+    private val lastBytesMap = mutableMapOf<Long, Long>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentRepoBinding.inflate(inflater, container, false)
@@ -63,21 +67,125 @@ class RepoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        token = requireActivity().getSharedPreferences("app", Context.MODE_PRIVATE)
-            .getString("github_token", "") ?: ""
+        
+        val appPrefs = requireActivity().getSharedPreferences("app", Context.MODE_PRIVATE)
+        token = appPrefs.getString("github_token", "") ?: ""
+        
+        downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        prefs = requireContext().getSharedPreferences("downloads_repo", Context.MODE_PRIVATE)
+        
+        restoreActiveDownloads()
+
         setupRecyclerView()
         setupListeners()
         loadReleases()
+        
+        startDownloadPolling()
+    }
+
+    private fun restoreActiveDownloads() {
+        activeDownloads.clear()
+        prefs.all.forEach { (key, value) ->
+            try {
+                val dmId = key.toLong()
+                val assetId = (value as? Long) ?: (value as? String)?.toLong() ?: return@forEach
+                activeDownloads[dmId] = assetId
+            } catch (_: Exception) {}
+        }
+    }
+
+    private fun saveActiveDownload(dmId: Long, assetId: Long) {
+        activeDownloads[dmId] = assetId
+        prefs.edit().putLong(dmId.toString(), assetId).apply()
+    }
+
+    private fun removeActiveDownload(dmId: Long) {
+        activeDownloads.remove(dmId)
+        prefs.edit().remove(dmId.toString()).apply()
+        val assetId = activeDownloads[dmId]
+        if (assetId != null) {
+            progressMap.remove(assetId)
+            speedMap.remove(assetId)
+            lastBytesMap.remove(dmId)
+        }
+    }
+
+    private fun startDownloadPolling() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (isActive) {
+                    if (activeDownloads.isNotEmpty()) {
+                        pollDownloadManager()
+                    }
+                    delay(1000)
+                }
+            }
+        }
+    }
+
+    private fun pollDownloadManager() {
+        val query = DownloadManager.Query()
+        val cursor: Cursor = try {
+            downloadManager.query(query)
+        } catch (e: Exception) { return }
+
+        val currentValidIds = mutableSetOf<Long>()
+        var uiNeedsUpdate = false
+
+        if (cursor.moveToFirst()) {
+            do {
+                val idIndex = cursor.getColumnIndex(DownloadManager.COLUMN_ID)
+                val statusIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                val bytesDownloadedIndex = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
+                val bytesTotalIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
+                
+                if (idIndex < 0 || statusIndex < 0 || bytesDownloadedIndex < 0 || bytesTotalIndex < 0) continue
+
+                val dmId = cursor.getLong(idIndex)
+                val assetId = activeDownloads[dmId] ?: continue
+                currentValidIds.add(dmId)
+
+                val status = cursor.getInt(statusIndex)
+                val bytesDownloaded = cursor.getLong(bytesDownloadedIndex)
+                val bytesTotal = cursor.getLong(bytesTotalIndex)
+
+                when (status) {
+                    DownloadManager.STATUS_SUCCESSFUL, DownloadManager.STATUS_FAILED -> {
+                        removeActiveDownload(dmId)
+                        uiNeedsUpdate = true
+                    }
+                    DownloadManager.STATUS_RUNNING -> {
+                        val progress = if (bytesTotal > 0) ((bytesDownloaded * 100) / bytesTotal).toInt() else 0
+                        progressMap[assetId] = progress
+                        
+                        val lastBytes = lastBytesMap[dmId] ?: 0L
+                        val speedBytes = bytesDownloaded - lastBytes
+                        lastBytesMap[dmId] = bytesDownloaded
+                        
+                        val speedText = "${formatSize(speedBytes)}/s"
+                        val sizeText = "${formatSize(bytesDownloaded)} / ${formatSize(bytesTotal)}"
+                        speedMap[assetId] = "$sizeText ($speedText)"
+                        uiNeedsUpdate = true
+                    }
+                }
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+
+        val missingIds = activeDownloads.keys - currentValidIds
+        missingIds.forEach { 
+            removeActiveDownload(it)
+            uiNeedsUpdate = true
+        }
+
+        if (uiNeedsUpdate) {
+            binding.rvReleases.adapter?.notifyDataSetChanged()
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        downloadScope.cancel()
     }
 
     private fun setupRecyclerView() {
@@ -163,79 +271,34 @@ class RepoFragment : Fragment() {
         else String.format(Locale.US, "%.0f KB", bytes / 1024.0)
     }
 
-    private fun downloadAndInstall(asset: AssetInfo, btnAction: MaterialButton, progressBar: ProgressBar) {
-        if (downloadJobs.containsKey(asset.id)) return
-        val job = downloadScope.launch {
-            try {
-                btnAction.isEnabled = false
-                progressBar.visibility = View.VISIBLE
-                progressBar.progress = 0
-                btnAction.text = "0%"
-
-                val file = withContext(Dispatchers.IO) {
-                    val client = OkHttpClient.Builder()
-                        .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-                        .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-                        .build()
-                    val request = Request.Builder().url(asset.browserDownloadUrl)
-                        .header("Authorization", "Bearer $token")
-                        .build()
-                    val response = client.newCall(request).execute()
-                    if (!response.isSuccessful) throw Exception("Download gagal (${response.code})")
-                    val body = response.body ?: throw Exception("Body kosong")
-                    val totalBytes = body.contentLength()
-                    val dir = File(requireContext().cacheDir, "downloads")
-                    dir.mkdirs()
-                    val outputFile = File(dir, asset.name)
-                    FileOutputStream(outputFile).use { output ->
-                        val buffer = ByteArray(8192)
-                        val input = body.byteStream()
-                        var bytesRead: Long = 0
-                        var bytes = input.read(buffer)
-                        while (bytes >= 0) {
-                            output.write(buffer, 0, bytes)
-                            bytesRead += bytes
-                            if (totalBytes > 0) {
-                                val pct = ((bytesRead * 100) / totalBytes).toInt()
-                                withContext(Dispatchers.Main) {
-                                    progressBar.progress = pct
-                                    btnAction.text = "$pct%"
-                                    downloadProgress[asset.id] = pct
-                                }
-                            }
-                            bytes = input.read(buffer)
-                        }
-                    }
-                    outputFile
-                }
-
-                progressBar.visibility = View.GONE
-                btnAction.text = "Install"
-                btnAction.icon = requireContext().getDrawable(R.drawable.ic_install)
-                btnAction.isEnabled = true
-                downloadJobs.remove(asset.id)
-                downloadProgress.remove(asset.id)
-
-                btnAction.setOnClickListener { installApk(file) }
-
-            } catch (e: CancellationException) {
-                btnAction.isEnabled = true
-                progressBar.visibility = View.GONE
-                btnAction.text = "Download"
-                btnAction.icon = requireContext().getDrawable(R.drawable.ic_download)
-                downloadJobs.remove(asset.id)
-                downloadProgress.remove(asset.id)
-            } catch (e: Exception) {
-                btnAction.isEnabled = true
-                progressBar.visibility = View.GONE
-                btnAction.text = "Download"
-                btnAction.icon = requireContext().getDrawable(R.drawable.ic_download)
-                downloadJobs.remove(asset.id)
-                downloadProgress.remove(asset.id)
-                if (isAdded) Toast.makeText(requireContext(), "Download gagal: ${e.message}", Toast.LENGTH_SHORT).show()
+    private fun startDownload(asset: AssetInfo) {
+        try {
+            val dir = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+            if (dir != null && !dir.exists()) dir.mkdirs()
+            
+            // Delete existing file to prevent (1), (2) suffixes and save space
+            val existingFile = File(dir, asset.name)
+            if (existingFile.exists()) {
+                existingFile.delete()
             }
+
+            val request = DownloadManager.Request(Uri.parse(asset.browserDownloadUrl))
+                .setTitle(asset.name)
+                .setDescription("Downloading asset from GitHub")
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setDestinationInExternalFilesDir(requireContext(), Environment.DIRECTORY_DOWNLOADS, asset.name)
+                .addRequestHeader("Authorization", "Bearer $token")
+
+            val downloadId = downloadManager.enqueue(request)
+            saveActiveDownload(downloadId, asset.id)
+            
+            progressMap[asset.id] = 0
+            speedMap[asset.id] = "Starting..."
+            binding.rvReleases.adapter?.notifyDataSetChanged()
+            
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Failed to start download: ${e.message}", Toast.LENGTH_SHORT).show()
         }
-        downloadJobs[asset.id] = job
     }
 
     private fun installApk(file: File) {
@@ -252,26 +315,51 @@ class RepoFragment : Fragment() {
             }
             startActivity(intent)
         } catch (e: Exception) {
-            // Fallback: try opening via browser
             Toast.makeText(requireContext(), "Buka pengaturan untuk izinkan install dari sumber tidak dikenal", Toast.LENGTH_LONG).show()
         }
     }
 
-    private inner class ReleasesAdapter : RecyclerView.Adapter<ReleasesAdapter.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_release, parent, false)
-            return ViewHolder(view)
+    private inner class ReleasesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        
+        private val TYPE_ITEM = 0
+        private val TYPE_FOOTER = 1
+
+        override fun getItemViewType(position: Int): Int {
+            if (!showAllReleases && releases.size > 3 && position == 3) return TYPE_FOOTER
+            return TYPE_ITEM
         }
 
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val release = releases[position]
-            holder.bind(release)
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            if (viewType == TYPE_FOOTER) {
+                val btn = MaterialButton(parent.context, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
+                    layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                        setMargins(0, 8, 0, 16)
+                    }
+                    text = "View All Releases"
+                    setOnClickListener {
+                        showAllReleases = true
+                        notifyDataSetChanged()
+                    }
+                }
+                return object : RecyclerView.ViewHolder(btn) {}
+            }
+            
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_release, parent, false)
+            return ReleaseViewHolder(view)
         }
 
-        override fun getItemCount() = releases.size
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            if (getItemViewType(position) == TYPE_ITEM) {
+                (holder as ReleaseViewHolder).bind(releases[position])
+            }
+        }
 
-        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        override fun getItemCount(): Int {
+            if (showAllReleases) return releases.size
+            return if (releases.size > 3) 4 else releases.size
+        }
+
+        inner class ReleaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             private val tvTag = itemView.findViewById<TextView>(R.id.tv_tag)
             private val tvDate = itemView.findViewById<TextView>(R.id.tv_date)
             private val tvReleaseName = itemView.findViewById<TextView>(R.id.tv_release_name)
@@ -293,29 +381,52 @@ class RepoFragment : Fragment() {
                     for (asset in release.assets) {
                         val assetView = LayoutInflater.from(itemView.context)
                             .inflate(R.layout.item_asset, layoutAssets, false)
+                            
                         val tvName = assetView.findViewById<TextView>(R.id.tv_asset_name)
                         val tvInfo = assetView.findViewById<TextView>(R.id.tv_asset_info)
+                        val tvSpeed = assetView.findViewById<TextView>(R.id.tv_download_speed)
                         val btnAction = assetView.findViewById<MaterialButton>(R.id.btn_asset_action)
-                        val progressBar = assetView.findViewById<ProgressBar>(R.id.progress_download)
+                        val progressBar = assetView.findViewById<LinearProgressIndicator>(R.id.progress_download)
 
                         tvName.text = asset.name
-                        tvInfo.text = "${formatSize(asset.size)} · ${NumberFormat.getNumberInstance(Locale.US).format(asset.downloadCount)} download"
+                        tvInfo.text = "${formatSize(asset.size)} · ${NumberFormat.getNumberInstance(Locale.US).format(asset.downloadCount)} downloads"
 
-                        val existingProgress = downloadProgress[asset.id]
-                        if (existingProgress != null && downloadJobs.containsKey(asset.id)) {
-                            btnAction.text = "$existingProgress%"
+                        val dir = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+                        val downloadedFile = if (dir != null) File(dir, asset.name) else null
+                        val isDownloaded = downloadedFile?.exists() == true
+                        val isActive = activeDownloads.values.contains(asset.id)
+
+                        if (isActive) {
+                            val progress = progressMap[asset.id] ?: 0
+                            val speed = speedMap[asset.id] ?: "Downloading..."
+                            
                             progressBar.visibility = View.VISIBLE
-                            progressBar.progress = existingProgress
+                            progressBar.progress = progress
+                            
+                            tvSpeed.visibility = View.VISIBLE
+                            tvSpeed.text = speed
+                            
+                            btnAction.text = "$progress%"
+                            btnAction.icon = null
                             btnAction.isEnabled = false
+                        } else if (isDownloaded) {
+                            progressBar.visibility = View.GONE
+                            tvSpeed.visibility = View.GONE
+                            
+                            btnAction.text = "Install"
+                            btnAction.icon = itemView.context.getDrawable(R.drawable.ic_install)
+                            btnAction.isEnabled = true
+                            
+                            btnAction.setOnClickListener { installApk(downloadedFile!!) }
                         } else {
+                            progressBar.visibility = View.GONE
+                            tvSpeed.visibility = View.GONE
+                            
                             btnAction.text = "Download"
                             btnAction.icon = itemView.context.getDrawable(R.drawable.ic_download)
-                            progressBar.visibility = View.GONE
-                        }
-
-                        btnAction.setOnClickListener {
-                            if (downloadJobs.containsKey(asset.id)) return@setOnClickListener
-                            downloadAndInstall(asset, btnAction, progressBar)
+                            btnAction.isEnabled = true
+                            
+                            btnAction.setOnClickListener { startDownload(asset) }
                         }
 
                         layoutAssets.addView(assetView)

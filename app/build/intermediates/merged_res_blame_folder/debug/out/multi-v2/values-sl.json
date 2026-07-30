@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.nathan.workspace.app-mergeDebugResources-41:/values-sl/values-sl.xml",
+            "outputFile": "com.nathan.workspace.app-mergeDebugResources-42:/values-sl/values-sl.xml",
             "map": [
                 {
                     "source": "C:\\Users\\runneradmin\\.gradle\\caches\\transforms-3\\0dd36292f5e6e33094dd72fdb9f0d8b3\\transformed\\navigation-ui-2.3.5\\res\\values-sl\\values-sl.xml",
