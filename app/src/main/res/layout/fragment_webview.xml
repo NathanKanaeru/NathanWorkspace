@@ -135,7 +135,7 @@
         android:id="@+id/webview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/card_shortcuts"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/progress_bar" />
@@ -150,9 +150,184 @@
         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/card_shortcuts"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- ===== SHORTCUT BAR ===== -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_shortcuts"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/surfaceContainerLow"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="1dp"
+        app:contentPadding="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="?attr/colorOutlineVariant"
+        app:strokeWidth="0dp">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="6dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_k_esc"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:contentDescription="Tombol Esc"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="44dp"
+                    android:text="Esc"
+                    android:textSize="12sp"
+                    app:cornerRadius="9999dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_k_ctrl"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:contentDescription="Tombol Ctrl"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="44dp"
+                    android:text="Ctrl"
+                    android:textSize="12sp"
+                    app:cornerRadius="9999dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_k_alt"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:contentDescription="Tombol Alt"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="44dp"
+                    android:text="Alt"
+                    android:textSize="12sp"
+                    app:cornerRadius="9999dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_k_tab"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:contentDescription="Tombol Tab"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="44dp"
+                    android:text="Tab"
+                    android:textSize="12sp"
+                    app:cornerRadius="9999dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_k_up"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:contentDescription="Panah atas"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="44dp"
+                    android:text="↑"
+                    android:textSize="16sp"
+                    app:cornerRadius="9999dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_k_down"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:contentDescription="Panah bawah"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="44dp"
+                    android:text="↓"
+                    android:textSize="16sp"
+                    app:cornerRadius="9999dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_k_left"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:contentDescription="Panah kiri"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="44dp"
+                    android:text="←"
+                    android:textSize="16sp"
+                    app:cornerRadius="9999dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_k_right"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:contentDescription="Panah kanan"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="44dp"
+                    android:text="→"
+                    android:textSize="16sp"
+                    app:cornerRadius="9999dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_k_enter"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:contentDescription="Tombol Enter"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="44dp"
+                    android:text="Enter"
+                    android:textSize="12sp"
+                    app:cornerRadius="9999dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_k_backspace"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:contentDescription="Tombol Backspace"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="44dp"
+                    android:text="⌫"
+                    android:textSize="16sp"
+                    app:cornerRadius="9999dp" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
