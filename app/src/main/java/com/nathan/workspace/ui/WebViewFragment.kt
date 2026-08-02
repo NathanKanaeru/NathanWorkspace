@@ -7,6 +7,8 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.InputDevice
+import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -60,6 +62,9 @@ class WebViewFragment : Fragment() {
             android.webkit.CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
             setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
+            isFocusable = true
+            isFocusableInTouchMode = true
+
             webViewClient = object : WebViewClient() {
 
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -96,6 +101,11 @@ class WebViewFragment : Fragment() {
                 override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
                     super.doUpdateVisitedHistory(view, url, isReload)
                     updateNavButtons()
+                }
+
+                override fun onUnhandledKeyEvent(view: WebView?, event: KeyEvent) {
+                    // Konsumsi tombol yang tidak ditangani halaman supaya tidak
+                    // diteruskan ke Activity (mis. ESC tidak boleh menutup APK).
                 }
             }
 
@@ -148,14 +158,14 @@ class WebViewFragment : Fragment() {
         }
 
         // ===== Shortcut bar =====
-        binding.btnKEsc.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_ESCAPE) }
-        binding.btnKTab.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_TAB) }
-        binding.btnKUp.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_DPAD_UP) }
-        binding.btnKDown.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_DPAD_DOWN) }
-        binding.btnKLeft.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_DPAD_LEFT) }
-        binding.btnKRight.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_DPAD_RIGHT) }
-        binding.btnKEnter.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_ENTER) }
-        binding.btnKBackspace.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_DEL) }
+        binding.btnKEsc.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_ESCAPE, SCAN_ESC) }
+        binding.btnKTab.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_TAB, SCAN_TAB) }
+        binding.btnKUp.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_DPAD_UP, SCAN_UP) }
+        binding.btnKDown.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_DPAD_DOWN, SCAN_DOWN) }
+        binding.btnKLeft.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_DPAD_LEFT, SCAN_LEFT) }
+        binding.btnKRight.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_DPAD_RIGHT, SCAN_RIGHT) }
+        binding.btnKEnter.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_ENTER, SCAN_ENTER) }
+        binding.btnKBackspace.setOnClickListener { dispatchKey(KeyEvent.KEYCODE_DEL, SCAN_BACKSPACE) }
         binding.btnKCtrl.setOnClickListener { toggleModifier(isCtrl = true) }
         binding.btnKAlt.setOnClickListener { toggleModifier(isCtrl = false) }
 
@@ -235,16 +245,33 @@ class WebViewFragment : Fragment() {
 
     // ===== Shortcut key handling =====
 
-    /** Kirim tombol ke WebView sebagai pasangan down+up (event trusted dari input pipeline). */
-    private fun dispatchKey(keyCode: Int) {
+    private var pendingKey: Runnable? = null
+
+    /**
+     * Fokuskan frame sesi CRD (iframe + canvas remote desktop) lewat JS supaya
+     * key event yang di-inject mendarat di remote desktop, bukan di halaman atas.
+     */
+    private fun focusRemoteFrame() {
+        binding.webview.evaluateJavascript(FOCUS_SCRIPT, null)
+    }
+
+    /** Kirim pasangan down+up sebagai event keyboard asli (trusted) ke WebView. */
+    private fun dispatchKey(keyCode: Int, scanCode: Int) {
         val wv = binding.webview
+        focusRemoteFrame()
         wv.requestFocus()
-        var meta = 0
-        if (ctrlToggled) meta = meta or KeyEvent.META_CTRL_ON or KeyEvent.META_CTRL_LEFT_ON
-        if (altToggled) meta = meta or KeyEvent.META_ALT_ON or KeyEvent.META_ALT_LEFT_ON
-        val now = SystemClock.uptimeMillis()
-        wv.dispatchKeyEvent(KeyEvent(now, now, KeyEvent.ACTION_DOWN, keyCode, 0, meta))
-        wv.dispatchKeyEvent(KeyEvent(now, now, KeyEvent.ACTION_UP, keyCode, 0, meta))
+        pendingKey?.let { wv.removeCallbacks(it) }
+        pendingKey = Runnable {
+            val now = SystemClock.uptimeMillis()
+            var meta = 0
+            if (ctrlToggled) meta = meta or KeyEvent.META_CTRL_ON or KeyEvent.META_CTRL_LEFT_ON
+            if (altToggled) meta = meta or KeyEvent.META_ALT_ON or KeyEvent.META_ALT_LEFT_ON
+            val down = newKeyEvent(now, KeyEvent.ACTION_DOWN, keyCode, scanCode, meta)
+            val up = newKeyEvent(now, KeyEvent.ACTION_UP, keyCode, scanCode, meta)
+            wv.dispatchKeyEvent(down)
+            wv.dispatchKeyEvent(up)
+        }
+        wv.postDelayed(pendingKey, 60L)
     }
 
     /** Toggle Ctrl/Alt: flip state, perbarui visual, kirim key event modifier asli. */
@@ -255,12 +282,28 @@ class WebViewFragment : Fragment() {
         setToggleLit(button, turningOn)
 
         val wv = binding.webview
+        focusRemoteFrame()
         wv.requestFocus()
-        val now = SystemClock.uptimeMillis()
-        val modKey = if (isCtrl) KeyEvent.KEYCODE_CTRL_LEFT else KeyEvent.KEYCODE_ALT_LEFT
-        val action = if (turningOn) KeyEvent.ACTION_DOWN else KeyEvent.ACTION_UP
-        wv.dispatchKeyEvent(KeyEvent(now, now, action, modKey, 0, 0))
+        pendingKey?.let { wv.removeCallbacks(it) }
+        pendingKey = Runnable {
+            val now = SystemClock.uptimeMillis()
+            val modKey = if (isCtrl) KeyEvent.KEYCODE_CTRL_LEFT else KeyEvent.KEYCODE_ALT_LEFT
+            val scan = if (isCtrl) SCAN_CTRL_LEFT else SCAN_ALT_LEFT
+            val action = if (turningOn) KeyEvent.ACTION_DOWN else KeyEvent.ACTION_UP
+            wv.dispatchKeyEvent(newKeyEvent(now, action, modKey, scan, 0))
+        }
+        wv.postDelayed(pendingKey, 60L)
     }
+
+    /**
+     * Buat KeyEvent dengan source keyboard asli + scancode fisik, supaya
+     * Chromium membangkitkan properti key/code yang benar untuk halaman.
+     */
+    private fun newKeyEvent(time: Long, action: Int, keyCode: Int, scanCode: Int, meta: Int): KeyEvent =
+        KeyEvent(
+            time, time, action, keyCode, 0, meta,
+            KeyCharacterMap.VIRTUAL_KEYBOARD, scanCode, 0, InputDevice.SOURCE_KEYBOARD
+        )
 
     private fun setToggleLit(button: MaterialButton, lit: Boolean) {
         button.isSelected = lit
@@ -297,6 +340,7 @@ class WebViewFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        _binding?.webview?.removeCallbacks(pendingKey)
         _binding?.webview?.destroy()
         super.onDestroyView()
         _binding = null
@@ -314,5 +358,47 @@ class WebViewFragment : Fragment() {
             "consent.google.com"
         )
         private val ALLOWED_CRD_PATHS = listOf("/access", "/access/")
+
+        // Scancode fisik (evdev) agar properti `code` di halaman terisi benar
+        private const val SCAN_ESC = 1
+        private const val SCAN_TAB = 15
+        private const val SCAN_ENTER = 28
+        private const val SCAN_BACKSPACE = 14
+        private const val SCAN_UP = 103
+        private const val SCAN_DOWN = 108
+        private const val SCAN_LEFT = 105
+        private const val SCAN_RIGHT = 106
+        private const val SCAN_CTRL_LEFT = 29
+        private const val SCAN_ALT_LEFT = 56
+
+        /**
+         * Fokuskan frame sesi CRD (iframe terbesar + canvas desktop di dalamnya).
+         * Tanpa ini, key event yang di-inject mendarat di dokumen atas dan tidak
+         * pernah sampai ke remote desktop.
+         */
+        private const val FOCUS_SCRIPT = """(function(){
+            function focusIn(win){
+                try{
+                    var doc=win.document;
+                    var c=doc.querySelector('canvas');
+                    if(c&&typeof c.focus==='function'){
+                        try{c.setAttribute('tabindex','0');c.focus();}catch(e){}
+                        return;
+                    }
+                    var a=doc.activeElement;
+                    if(a&&a!==doc.body&&typeof a.focus==='function'){try{a.focus();}catch(e){}return;}
+                    if(doc.body&&typeof doc.body.focus==='function'){try{doc.body.focus();}catch(e){}}
+                }catch(e){}
+            }
+            try{
+                var fs=document.querySelectorAll('iframe'),best=null,area=-1;
+                for(var i=0;i<fs.length;i++){
+                    var r=fs[i].getBoundingClientRect(),a=r.width*r.height;
+                    if(a>area){area=a;best=fs[i];}
+                }
+                if(best&&best.contentWindow){try{best.contentWindow.focus();}catch(e){}focusIn(best.contentWindow);}
+                else{focusIn(window);}
+            }catch(e){}
+        })()"""
     }
 }
